@@ -1,0 +1,17 @@
+<template name="5b6d3258">
+  <view class="_view data-v-7330feb8">
+    <view class="_view data-v-7330feb8 banner">
+      <image class="_image data-v-7330feb8 banner-img" src="{{banner.cover}}"></image>
+      <view class="_view data-v-7330feb8 banner-title">{{banner.title}}</view>
+    </view>
+    <view class="_view data-v-7330feb8 article-meta">
+      <text class="_text data-v-7330feb8 article-author">{{banner.author_name}}</text>
+      <text class="_text data-v-7330feb8 article-text">发表于</text>
+      <text class="_text data-v-7330feb8 article-time">{{banner.published_at}}</text>
+    </view>
+    <view class="_view data-v-7330feb8 article-content">
+      <rich-text nodes="{{htmlString}}" class="_rich-text data-v-7330feb8"></rich-text>
+    </view>
+    <ad wx:if="{{htmlString}}" unit-id="adunit-01b7a010bf53d74e" class="_ad data-v-7330feb8"></ad>
+  </view>
+</template>

@@ -1,0 +1,43 @@
+<template name="307d6998">
+  <view class="_view data-v-2e1176b8 content">
+    <view class="_view data-v-2e1176b8 uni-padding-wrap">
+      <view class="_view data-v-2e1176b8 page-section swiper">
+        <view class="_view data-v-2e1176b8 page-section-spacing">
+          <swiper class="_swiper data-v-2e1176b8 swiper" indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}">
+            <swiper-item class="_swiper-item data-v-2e1176b8">
+              <view class="_view data-v-2e1176b8 swiper-item uni-bg-red">A</view>
+            </swiper-item>
+            <swiper-item class="_swiper-item data-v-2e1176b8">
+              <view class="_view data-v-2e1176b8 swiper-item uni-bg-green">B</view>
+            </swiper-item>
+            <swiper-item class="_swiper-item data-v-2e1176b8">
+              <view class="_view data-v-2e1176b8 swiper-item uni-bg-blue">C</view>
+            </swiper-item>
+          </swiper>
+        </view>
+      </view>
+    </view>
+    <view class="_view data-v-2e1176b8 uni-swiper-msg">
+      <view class="_view data-v-2e1176b8 uni-swiper-msg-icon"></view>
+      <swiper vertical="true" autoplay="true" circular="true" interval="3000" class="_swiper data-v-2e1176b8">
+        <swiper-item wx:key="index" key="{{index}}" wx:for="{{msg}}" wx:for-index="index" wx:for-item="item" class="_swiper-item data-v-2e1176b8">
+          <navigator class="_navigator data-v-2e1176b8">{{item}}</navigator>
+        </swiper-item>
+      </swiper>
+    </view>
+    <view class="_view data-v-2e1176b8 uni-list">
+      <view class="_view data-v-2e1176b8 uni-list-cell" hover-class="uni-list-cell-hover" wx:key="key" key="{{key}}" bindtap="handleProxy" data-eventid="{{'Gm3-0-'+key}}" data-comkey="{{$k}}" wx:for="{{listData}}" wx:for-index="key" wx:for-item="value">
+        <view class="_view data-v-2e1176b8 uni-media-list">
+          <image class="_image data-v-2e1176b8 uni-media-list-logo" src="{{value.cover}}"></image>
+          <view class="_view data-v-2e1176b8 uni-media-list-body">
+            <view class="_view data-v-2e1176b8 uni-media-list-text-top">{{value.title}}</view>
+            <view class="_view data-v-2e1176b8 uni-media-list-text-bottom">
+              <text class="_text data-v-2e1176b8">{{value.author_name}}</text>
+              <text class="_text data-v-2e1176b8">{{value.published_at}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>

@@ -1,0 +1,37 @@
+<import src="/modules/@dcloudio/uni-ui/lib/uni-status-bar/uni-status-bar.vue.wxml" />
+<import src="/modules/@dcloudio/uni-ui/lib/uni-icon/uni-icon.vue.wxml" />
+<import src="/components/slots" />
+<template name="2fdcddb6">
+  <view class="_view data-v-c83acac4 uni-navbar">
+    <template name="left"></template>
+    <template name="default"></template>
+    <template name="right"></template>
+    <view class="_view data-v-c83acac4 uni-navbar__content {{[  isFixed ? 'uni-navbar--fixed' : '',  hasShadow ? 'uni-navbar--shadow' : '',  hasBorder ? 'uni-navbar--border' : '']}}" style=" {{('background-color:' + backgroundColor + ';')}}">
+      <template wx:if="{{insertStatusBar}}" data="{{...$root['0'], ...$root[$kk+'44V-0'],$root}}" is="f9575c36"></template>
+      <view class="_view data-v-c83acac4 uni-navbar__header" style=" {{('color:' + color + ';')}}">
+        <view class="_view data-v-c83acac4 uni-navbar__header-btns" bindtap="handleProxy" data-eventid="{{'0qU-0'}}" data-comkey="{{$k}}">
+          <view wx:if="{{leftIcon.length}}" class="_view data-v-c83acac4">
+            <template size="24" data="{{...$root['0'], ...$root[$kk+'NER-1'],$root}}" is="2b777476"></template>
+          </view>
+          <view wx:if="{{leftText.length}}" class="_view data-v-c83acac4 uni-navbar-btn-text {{[!leftIcon.length ? 'uni-navbar-btn-icon-left' : '']}}">{{leftText}}</view>
+          <template data="{{...$root['0'], ...$root[$k], $root}}" is="{{$slotleft || 'left'}}"></template>
+        </view>
+        <view class="_view data-v-c83acac4 uni-navbar__header-container">
+          <view wx:if="{{title.length}}" class="_view data-v-c83acac4 uni-navbar__header-container-inner">{{title}}</view>
+          <template data="{{...$root['0'], ...$root[$k], $root}}" is="{{$slotdefault || 'default'}}"></template>
+        </view>
+        <view class="_view data-v-c83acac4 uni-navbar__header-btns" bindtap="handleProxy" data-eventid="{{'1Fl-1'}}" data-comkey="{{$k}}">
+          <view wx:if="{{rightIcon.length}}" class="_view data-v-c83acac4">
+            <template size="24" data="{{...$root['0'], ...$root[$kk+'bNn-4'],$root}}" is="2b777476"></template>
+          </view>
+          <view wx:if="{{rightText.length&&!rightIcon.length}}" class="_view data-v-c83acac4 uni-navbar-btn-text">{{rightText}}</view>
+          <template data="{{...$root['0'], ...$root[$k], $root}}" is="{{$slotright || 'right'}}"></template>
+        </view>
+      </view>
+    </view>
+    <view class="_view data-v-c83acac4 uni-navbar__placeholder" wx:if="{{isFixed}}">
+      <template wx:if="{{insertStatusBar}}" data="{{...$root['0'], ...$root[$kk+'t2A-6'],$root}}" is="f9575c36"></template>
+      <view class="_view data-v-c83acac4 uni-navbar__placeholder-view"></view>
+    </view>
+  </view>
+</template>

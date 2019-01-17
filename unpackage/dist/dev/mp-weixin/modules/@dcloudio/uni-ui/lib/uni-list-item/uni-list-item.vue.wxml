@@ -1,0 +1,24 @@
+<import src="/modules/@dcloudio/uni-ui/lib/uni-icon/uni-icon.vue.wxml" />
+<import src="/modules/@dcloudio/uni-ui/lib/uni-badge/uni-badge.vue.wxml" />
+<template name="bc4cd152">
+  <view class="_view data-v-9715a8e0 uni-list-cell {{[disabled === true || disabled === 'true' ? 'uni-list-cell--disabled' : '']}}" hover-class="{{disabled === true || disabled === 'true' || showSwitch === true || showSwitch === 'true' ? '' : 'uni-list-cell--hover'}}"
+    bindtap="handleProxy" data-eventid="{{'aYK-1'}}" data-comkey="{{$k}}">
+    <view class="_view data-v-9715a8e0 uni-list-cell__container">
+      <view class="_view data-v-9715a8e0 uni-list-cell__icon" wx:if="{{thumb}}">
+        <image class="_image data-v-9715a8e0 uni-list-cell__icon-img" src="{{thumb}}"></image>
+      </view>
+      <view class="_view data-v-9715a8e0 uni-list-cell__icon" wx:elif="{{showExtraIcon === true || showExtraIcon === 'true'}}">
+        <template data="{{...$root['0'], ...$root[$kk+'TK4-0'],$root}}" is="2b777476"></template>
+      </view>
+      <view class="_view data-v-9715a8e0 uni-list-cell__content">
+        <view class="_view data-v-9715a8e0 uni-list-cell__content-title">{{title}}</view>
+        <view class="_view data-v-9715a8e0 uni-list-cell__content-note" wx:if="{{note}}">{{note}}</view>
+      </view>
+      <view class="_view data-v-9715a8e0 uni-list-cell__extra" wx:if="{{showBadge === true || showBadge === 'true' || showArrow === true || showArrow === 'true'||showSwitch === true || showSwitch === 'true'}}">
+        <template wx:if="{{showBadge === true || showBadge === 'true'}}" data="{{...$root['0'], ...$root[$kk+'f2Y-1'],$root}}" is="16543319"></template>
+        <switch wx:if="{{showSwitch === true || showSwitch === 'true'}}" disabled="{{disabled}}" checked="{{switchChecked}}" bindchange="handleProxy" data-eventid="{{'AJk-0'}}" data-comkey="{{$k}}" class="_switch data-v-9715a8e0" />
+        <template wx:if="{{showArrow === true || showArrow === 'true'}}" color="#bbb" size="20" type="arrowright" data="{{...$root['0'], ...$root[$kk+'S2q-2'],$root}}" is="2b777476"></template>
+      </view>
+    </view>
+  </view>
+</template>
