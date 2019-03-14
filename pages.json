@@ -36,6 +36,11 @@
 			"style": {
 				"navigationBarTitleText": "我的"
 			}
+		},{
+			"path":"pages/study/study",
+			"style":{
+				"navigationBarTitleText": "学习"
+			}
 		},
 		{
 			"path": "pages/list2detail-list/list2detail-list",
@@ -54,6 +59,17 @@
 					}
 				}
 			}
+		},{
+			"path": "pages/study/video/video-list",
+			"style": {
+				"navigationBarTitleText": "视频",
+				"enablePullDownRefresh": true
+			}
+		},{
+			"path":"pages/study/video/video-detial",
+			"style":{
+				"navigationBarTitleText":"视频详情内容"
+			}
 		}
 	],
 	"tabBar": {
@@ -65,7 +81,12 @@
 			"text": "首页",
 			"iconPath": "static/img/home.png",
 			"selectedIconPath": "static/img/homeHL.png"
-		}, {
+		},{
+			"pagePath": "pages/study/study",
+			"text": "学习",
+			"iconPath": "static/img/study.png",
+			"selectedIconPath": "static/img/studyHL.png"
+		},{
 			"pagePath": "pages/user/user",
 			"text": "我的",
 			"iconPath": "static/img/user.png",
