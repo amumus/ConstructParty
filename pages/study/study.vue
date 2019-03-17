@@ -5,7 +5,7 @@
     {image:'https://img-cdn-qiniu.dcloud.net.cn/img/shu.png',text:'视频学习'},
     {image:'https://img-cdn-qiniu.dcloud.net.cn/img/lindang.png',text:'党史'},
     {image:'https://img-cdn-qiniu.dcloud.net.cn/img/laoren.png',text:'学习积分'},
-    {image:'https://img-cdn-qiniu.dcloud.net.cn/img/liwu.png',text:'礼物'},
+    {image:'https://img-cdn-qiniu.dcloud.net.cn/img/liwu.png',text:'学习报表'},
     {image:'https://img-cdn-qiniu.dcloud.net.cn/img/maozi.png',text:'帽子'},
     {image:'https://img-cdn-qiniu.dcloud.net.cn/img/shoutao.png',text:'手套'},
     {image:'https://img-cdn-qiniu.dcloud.net.cn/img/xueqiao.png',text:'雪橇'},
@@ -34,6 +34,15 @@
 						})
 						break;
 					case 1: 
+						console.log("1")
+						break;
+					case 2: 
+						console.log("1")
+						break;
+					case 3: 
+						console.log("1")
+						break;
+					case 4: 
 						console.log("1")
 						break;
 				}

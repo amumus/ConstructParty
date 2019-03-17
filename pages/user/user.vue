@@ -14,6 +14,9 @@
     } from 'vuex'
 
     export default {
+		data(){
+			
+		},
         computed: {
             ...mapState(['hasLogin', 'forcedLogin'])
         },

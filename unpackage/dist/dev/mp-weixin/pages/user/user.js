@@ -111,6 +111,9 @@ var _vuex = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.j
 
 
 {
+  data: function data() {
+
+  },
   computed: _objectSpread({},
   (0, _vuex.mapState)(['hasLogin', 'forcedLogin'])),
 

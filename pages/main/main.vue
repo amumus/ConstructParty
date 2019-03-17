@@ -5,30 +5,20 @@
 			<view class="page-section swiper">
 				<view class="page-section-spacing">
 					<swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
-						<swiper-item>
-							<view class="swiper-item uni-bg-red">A</view>
-						</swiper-item>
-						<swiper-item>
-							<view class="swiper-item uni-bg-green">B</view>
-						</swiper-item>
-						<swiper-item>
-							<view class="swiper-item uni-bg-blue">C</view>
+						<swiper-item v-for="(value,key) in contentData" :key="key" @click="goContentDetail(value)">
+							<image :src="value.image" mode="scaleToFill" class="swiper-item"></image>
+							<text style="display: inline;">{{value.title}}</text>
+							<view style="float: right;">
+								<text>--</text>
+								<text style="color: #007aff;">{{value.id}}</text>
+								<text>--</text>
+							</view>
 						</swiper-item>
 					</swiper>
 				</view>
 			</view>
 		</view>
-		<!-- 滚动公告 -->
-		<view class="uni-swiper-msg">
-			<view class="uni-swiper-msg-icon">
-				<!-- <image src="https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/uni@2x.png" mode="widthFix" style="height:30px;"></image> -->
-			</view>
-			<swiper vertical="true" autoplay="true" circular="true" interval="3000">
-				<swiper-item v-for="(item, index) in msg" :key="index">
-					<navigator>{{item}}</navigator>
-				</swiper-item>
-			</swiper>
-		</view>
+		
 		<!-- 新闻列表 -->
 		<view class="uni-list">
 			<view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(value,key) in listData" :key="key" @click="goDetail(value)">
@@ -57,23 +47,18 @@
 	export default {
 		data() {
 			return {
+				//轮播图配置
 				title: 'swiper',
-				background: ['color1', 'color2', 'color3'],
-				indicatorDots: true,
+				contentData:[],
+				indicatorDots: false,
 				autoplay: true,
 				interval: 2000,
 				duration: 500,
 				// 列表
-				banner: {},
+				pageStart:0,
+				pageNum:10;
 				listData: [],
-				last_id: "",
-				reload: false,
-				//滚动列表
-				msg : [
-					'uni-app行业峰会频频亮相，开发者反响热烈',
-					'DCloud完成B2轮融资，uni-app震撼发布',
-					'36氪热文榜推荐、CSDN公号推荐 DCloud CEO文章'
-				]
+				reload: false
 			}
 		},
 		computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
@@ -105,15 +90,14 @@
 			// 				});
 			// 			}
 			// 列表
-			this.getBanner();
+			this.getSwiper();
 			this.getList();
 		},
 		onPullDownRefresh() {
 			uni.showNavigationBarLoading();
 			uni.showLoading({'title':"加载中..."});
+			this.pageStart = 0;
 			this.reload = true;
-			this.last_id = "";
-			this.getBanner();
 			this.getList();
 			setTimeout(function() {
 				uni.hideNavigationBarLoading();
@@ -126,28 +110,24 @@
 			this.getList();
 		},
 		methods: {
-			//================列表 start =============
-			getBanner() {
-				let data = {
-					column: "id,post_id,title,author_name,cover,published_at" //需要的字段名
-				};
+			getSwiper(){
+				let that = this;
+				console.log(this.websiteUrl);
 				uni.request({
-					url: 'https://unidemo.dcloud.net.cn/api/banner/36kr',
-					data: data,
-					success: (data) => {
-						uni.stopPullDownRefresh();
-						if (data.statusCode == 200) {
-							this.banner = data.data;
-						}
-					},
-					fail: (data, code) => {
-						console.log('fail' + JSON.stringify(data));
+					url: this.websiteUrl+'uniApp/content/listContent',
+					success:(data)=> {
+						console.log(data.data)
+						that.contentData = data.data.data;
 					}
 				})
 			},
+			goContentDetail(value){
+				console.log(value);
+			},
+			//================列表 start =============
 			getList() {
 				var data = {
-					column: "id,post_id,title,author_name,cover,published_at" //需要的字段名
+					column: "" //需要的字段名
 				};
 				if (this.last_id) { //说明已有数据，目前处于上拉加载
 					data.minId = this.last_id;
@@ -158,6 +138,7 @@
 					url: 'https://unidemo.dcloud.net.cn/api/news',
 					data: data,
 					success: (data) => {
+						uni.stopPullDownRefresh();
 						if (data.statusCode == 200) {
 							let list = this.setTime(data.data);
 							this.listData = this.reload ? list : this.listData.concat(list);
@@ -166,6 +147,7 @@
 						}
 					},
 					fail: (data, code) => {
+						uni.stopPullDownRefresh();
 						console.log('fail' + JSON.stringify(data));
 					}
 				})
@@ -231,14 +213,18 @@
 
 	/* 	轮播图 */
 	.swiper {
-		height: 300upx;
+		height: 500upx;
+		
 	}
-
+/* background-color: rgba(0,0,0,0.1); */
 	.swiper-item {
 		display: block;
-		height: 300upx;
-		line-height: 300upx;
+		height: 400upx;
+		line-height: 400upx;
 		text-align: center;
+	}
+	.swiper-item text{
+		font-size: 25upx;
 	}
 
 	.swiper-list {
@@ -255,7 +241,7 @@
 		position: absolute;
 		right: 20upx;
 	}
-
+		
 	/* 列表 */
 	.banner {
 		height: 360upx;
@@ -343,11 +329,6 @@
 
 	.uni-list .uni-list-cell:last-child::after {
 		height: 0upx;
-	}
-	/* 滚动公告栏 */
-	.uni-swiper-msg{
-		height: 40upx;
-		font-size: 32upx;
 	}
 	/* 图文列表 */
 	.uni-media-list {

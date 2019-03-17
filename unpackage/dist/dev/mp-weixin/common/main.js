@@ -89,6 +89,10 @@ _vue.default.config.productionTip = false;
 
 _vue.default.prototype.$store = _store.default;
 
+//配置全局请求地址
+_vue.default.prototype.websiteUrl = "http://127.0.0.1:8080/";
+
+
 _App.default.mpType = 'app';
 
 var app = new _vue.default(_objectSpread({

@@ -7,6 +7,10 @@ Vue.config.productionTip = false
 
 Vue.prototype.$store = store
 
+//配置全局请求地址
+Vue.prototype.websiteUrl = "http://127.0.0.1:8080/"
+
+
 App.mpType = 'app'
 
 const app = new Vue({

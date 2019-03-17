@@ -311,6 +311,15 @@ var _default = {
           break;
         case 1:
           console.log("1");
+          break;
+        case 2:
+          console.log("1");
+          break;
+        case 3:
+          console.log("1");
+          break;
+        case 4:
+          console.log("1");
           break;}
 
 
@@ -438,7 +447,7 @@ var render = function() {
             },
             {
               image: "https://img-cdn-qiniu.dcloud.net.cn/img/liwu.png",
-              text: "礼物"
+              text: "学习报表"
             },
             {
               image: "https://img-cdn-qiniu.dcloud.net.cn/img/maozi.png",
