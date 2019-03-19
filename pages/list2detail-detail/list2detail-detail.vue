@@ -1,13 +1,13 @@
 <template>
     <view>
         <view class="banner">
-            <image class="banner-img" :src="banner.cover"></image>
+            <image class="banner-img" :src="banner.image"></image>
             <view class="banner-title">{{banner.title}}</view>
         </view>
         <view class="article-meta">
-            <text class="article-author">{{banner.author_name}}</text>
+            <text class="article-author">{{banner.author}}</text>
             <text class="article-text">发表于</text>
-            <text class="article-time">{{banner.published_at}}</text>
+            <text class="article-time">{{banner.created}}</text>
         </view>
         <view class="article-content">
             <rich-text :nodes="htmlString"></rich-text>
@@ -27,12 +27,6 @@
                 htmlString: ""
             }
         },
-        onShareAppMessage() {
-            return {
-                title: this.banner.title,
-                path: '/pages/template/list2detail-detail/list2detail-detail?detailDate=' + JSON.stringify(this.banner)
-            }
-        },
         onLoad(event) {
             // 目前在某些平台参数会被主动 decode，暂时这样处理。
             try {
@@ -49,12 +43,13 @@
         methods: {
             getDetail() {
                 uni.request({
-                    url: 'https://unidemo.dcloud.net.cn/api/news/36kr/' + this.banner.post_id,
+                    url: this.websiteUrl+'uniApp/news/getNews?id=' + this.banner.id,
                     success: (data) => {
-                        if (data.statusCode == 200) {
-                            this.htmlString = data.data.content.replace(/\\/g, "").replace(/<img/g,
-                                "<img style=\"display:none;\"");
-                        }
+                        
+                        this.htmlString = data.data.data.newsContent.content.replace(/\\/g, "").replace(/<img/g,
+                        "<img style=\"width:100%;\"");
+							// this.htmlString = data.data.data.newsContent.content;
+                        
                     },
                     fail: () => {
                         console.log('fail');

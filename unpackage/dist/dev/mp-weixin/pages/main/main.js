@@ -110,9 +110,198 @@ __webpack_require__.r(__webpack_exports__);
   !*** ./node_modules/babel-loader/lib!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-preprocess-loader??ref--12-1!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-preprocess-loader??ref--18-0!./node_modules/@dcloudio/webpack-uni-mp-loader/lib/script.js!./node_modules/vue-loader/lib??vue-loader-options!D:/HBuilderProjects/ConstructParty/ConstructParty/pages/main/main.vue?vue&type=script&lang=js& ***!
   \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/@dcloudio/webpack-uni-mp-loader/lib/script.js):\nSyntaxError: unknown: Unexpected token, expected \",\" (59:13)\n\n  57 | \t\t\t// 列表\n  58 | \t\t\tpageStart:0,\n> 59 | \t\t\tpageNum:10;\n     | \t\t\t          ^\n  60 | \t\t\tlistData: [],\n  61 | \t\t\treload: false\n  62 | \t\t}\n    at _class.raise (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:4051:15)\n    at _class.unexpected (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:5382:16)\n    at _class.expect (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:5370:28)\n    at _class.parseObj (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:6861:14)\n    at _class.parseExprAtom (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:6487:21)\n    at _class.parseExprSubscripts (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:6104:21)\n    at _class.parseMaybeUnary (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:6083:21)\n    at _class.parseMaybeUnary (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10675:54)\n    at _class.parseExprOps (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:5968:21)\n    at _class.parseMaybeConditional (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:5940:21)\n    at _class.parseMaybeAssign (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:5887:21)\n    at _class.parseMaybeAssign (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10631:87)\n    at _class.parseExpression (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:5840:21)\n    at _class.parseReturnStatement (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:7863:28)\n    at _class.parseStatementContent (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:7539:21)\n    at _class.parseStatementContent (D:\\Program Files\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10378:58)");
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var _vuex = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");var dateUtils = __webpack_require__(/*! ../../common/util.js */ "../../../../HBuilderProjects/ConstructParty/ConstructParty/common/util.js").dateUtils;var _default =
+
+
+
+{
+  data: function data() {
+    return {
+      //轮播图配置
+      title: 'swiper',
+      contentData: [],
+      indicatorDots: false,
+      autoplay: true,
+      interval: 2000,
+      duration: 500,
+      // 列表
+      pageStart: 0,
+      pageNum: 10,
+      listData: [],
+      reload: false };
+
+  },
+  computed: (0, _vuex.mapState)(['forcedLogin', 'hasLogin', 'userName']),
+  onLoad: function onLoad() {
+    // 			if (!this.hasLogin) {
+    // 				uni.showModal({
+    // 					title: '未登录',
+    // 					content: '您未登录，需要登录后才能继续',
+    // 					/**
+    // 					 * 如果需要强制登录，不显示取消按钮
+    // 					 */
+    // 					showCancel: !this.forcedLogin,
+    // 					success: (res) => {
+    // 						if (res.confirm) {
+    // 							/**
+    // 							 * 如果需要强制登录，使用reLaunch方式
+    // 							 */
+    // 							if (this.forcedLogin) {
+    // 								uni.reLaunch({
+    // 									url: '../login/login'
+    // 								});
+    // 							} else {
+    // 								uni.navigateTo({
+    // 									url: '../login/login'
+    // 								});
+    // 							}
+    // 						}
+    // 					}
+    // 				});
+    // 			}
+    // 列表
+    this.getSwiper();
+    this.getList(0);
+  },
+  onPullDownRefresh: function onPullDownRefresh() {
+    uni.showNavigationBarLoading();
+    uni.showLoading({ 'title': "加载中..." });
+    this.pageStart = 0;
+    this.reload = true;
+    this.getList(0);
+    setTimeout(function () {
+      uni.hideNavigationBarLoading();
+      uni.stopPullDownRefresh();
+      uni.hideLoading();
+    }, 1000);
+  },
+  onReachBottom: function onReachBottom() {
+    this.getList(1);
+  },
+  methods: {
+    getSwiper: function getSwiper() {
+      var that = this;
+      console.log(this.websiteUrl);
+      uni.request({
+        url: this.websiteUrl + 'uniApp/content/listContent',
+        success: function success(data) {
+          that.contentData = data.data.data;
+        } });
+
+    },
+    goContentDetail: function goContentDetail(value) {
+      console.log(value);
+    },
+    //================列表 start =============
+    getList: function getList(type) {
+      var that = this;
+      //上拉加载更多
+      if (type == 1) {
+        this.pageStart += 1;
+      } else {//下拉刷新或第一次进入
+        this.pageStart = 0;
+      }
+      var data = {
+        pageStart: this.pageStart,
+        pageNum: this.pageNum };
+
+
+      uni.request({
+        url: this.websiteUrl + 'uniApp/news/getNewsList',
+        data: data,
+        success: function success(data) {
+          if (type == 1) {
+            that.listData = that.listData.concat(data.data.data.data);
+          } else {//下拉刷新或第一次进入
+            that.listData = data.data.data.data;
+            console.log(that.listData);
+          }
+
+        },
+        fail: function fail(data, code) {
+          uni.stopPullDownRefresh();
+          console.log('fail' + JSON.stringify(data));
+        } });
+
+    },
+    goDetail: function goDetail(e) {
+      // 				if (!/前|刚刚/.test(e.published_at)) {
+      // 					e.published_at = dateUtils.format(e.published_at);
+      // 				}
+      var detail = {
+        author: e.author,
+        image: e.image,
+        id: e.id,
+        created: e.created,
+        title: e.title };
+
+      uni.navigateTo({
+        url: "../list2detail-detail/list2detail-detail?detailDate=" + encodeURIComponent(JSON.stringify(
+        detail)) });
+
+    },
+    setTime: function setTime(items) {
+      var newItems = [];
+      items.forEach(function (e) {
+        newItems.push({
+          author: e.author,
+          image: e.image,
+          id: e.id,
+          created: dateUtils.format(e.created),
+          title: e.title });
+
+      });
+      return newItems;
+    }
+
+    //================列表 end ======================
+  } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
 
 /***/ }),
 
@@ -222,15 +411,15 @@ var render = function() {
             _c("view", { staticClass: "uni-media-list" }, [
               _c("image", {
                 staticClass: "uni-media-list-logo",
-                attrs: { src: value.cover }
+                attrs: { src: value.image }
               }),
               _c("view", { staticClass: "uni-media-list-body" }, [
                 _c("view", { staticClass: "uni-media-list-text-top" }, [
                   _vm._v(_vm._s(value.title))
                 ]),
                 _c("view", { staticClass: "uni-media-list-text-bottom" }, [
-                  _c("text", [_vm._v(_vm._s(value.author_name))]),
-                  _c("text", [_vm._v(_vm._s(value.published_at))])
+                  _c("text", [_vm._v(_vm._s(value.author))]),
+                  _c("text", [_vm._v(_vm._s(value.created))])
                 ])
               ])
             ])

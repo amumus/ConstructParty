@@ -43,13 +43,6 @@
 			}
 		},
 		{
-			"path": "pages/list2detail-list/list2detail-list",
-			"style": {
-				"navigationBarTitleText": "列表到详情示例",
-				"enablePullDownRefresh": true
-			}
-		},
-		{
 			"path": "pages/list2detail-detail/list2detail-detail",
 			"style": {
 				"navigationBarTitleText": "详情",

@@ -142,12 +142,6 @@ __webpack_require__.r(__webpack_exports__);
       htmlString: "" };
 
   },
-  onShareAppMessage: function onShareAppMessage() {
-    return {
-      title: this.banner.title,
-      path: '/pages/template/list2detail-detail/list2detail-detail?detailDate=' + JSON.stringify(this.banner) };
-
-  },
   onLoad: function onLoad(event) {
     // 目前在某些平台参数会被主动 decode，暂时这样处理。
     try {
@@ -164,12 +158,13 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     getDetail: function getDetail() {var _this = this;
       uni.request({
-        url: 'https://unidemo.dcloud.net.cn/api/news/36kr/' + this.banner.post_id,
+        url: this.websiteUrl + 'uniApp/news/getNews?id=' + this.banner.id,
         success: function success(data) {
-          if (data.statusCode == 200) {
-            _this.htmlString = data.data.content.replace(/\\/g, "").replace(/<img/g,
-            "<img style=\"display:none;\"");
-          }
+
+          _this.htmlString = data.data.data.newsContent.content.replace(/\\/g, "").replace(/<img/g,
+          "<img style=\"width:100%;\"");
+          // this.htmlString = data.data.data.newsContent.content;
+
         },
         fail: function fail() {
           console.log('fail');
@@ -212,7 +207,7 @@ var render = function() {
       _c("view", { staticClass: "banner" }, [
         _c("image", {
           staticClass: "banner-img",
-          attrs: { src: _vm.banner.cover }
+          attrs: { src: _vm.banner.image }
         }),
         _c("view", { staticClass: "banner-title" }, [
           _vm._v(_vm._s(_vm.banner.title))
@@ -220,11 +215,11 @@ var render = function() {
       ]),
       _c("view", { staticClass: "article-meta" }, [
         _c("text", { staticClass: "article-author" }, [
-          _vm._v(_vm._s(_vm.banner.author_name))
+          _vm._v(_vm._s(_vm.banner.author))
         ]),
         _c("text", { staticClass: "article-text" }, [_vm._v("发表于")]),
         _c("text", { staticClass: "article-time" }, [
-          _vm._v(_vm._s(_vm.banner.published_at))
+          _vm._v(_vm._s(_vm.banner.created))
         ])
       ]),
       _c(

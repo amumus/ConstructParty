@@ -23,12 +23,12 @@
 		<view class="uni-list">
 			<view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(value,key) in listData" :key="key" @click="goDetail(value)">
 				<view class="uni-media-list">
-					<image class="uni-media-list-logo" :src="value.cover"></image>
+					<image class="uni-media-list-logo" :src="value.image"></image>
 					<view class="uni-media-list-body">
 						<view class="uni-media-list-text-top">{{value.title}}</view>
 						<view class="uni-media-list-text-bottom">
-							<text>{{value.author_name}}</text>
-							<text>{{value.published_at}}</text>
+							<text>{{value.author}}</text>
+							<text>{{value.created}}</text>
 						</view>
 					</view>
 				</view>
@@ -56,7 +56,7 @@
 				duration: 500,
 				// 列表
 				pageStart:0,
-				pageNum:10;
+				pageNum:10,
 				listData: [],
 				reload: false
 			}
@@ -91,23 +91,22 @@
 			// 			}
 			// 列表
 			this.getSwiper();
-			this.getList();
+			this.getList(0);
 		},
 		onPullDownRefresh() {
 			uni.showNavigationBarLoading();
 			uni.showLoading({'title':"加载中..."});
 			this.pageStart = 0;
 			this.reload = true;
-			this.getList();
+			this.getList(0);
 			setTimeout(function() {
 				uni.hideNavigationBarLoading();
 				uni.stopPullDownRefresh();
 				uni.hideLoading();
-				console.log('stopPullDownRefresh')
 			}, 1000)
 		},
 		onReachBottom() {
-			this.getList();
+			this.getList(1);
 		},
 		methods: {
 			getSwiper(){
@@ -116,7 +115,6 @@
 				uni.request({
 					url: this.websiteUrl+'uniApp/content/listContent',
 					success:(data)=> {
-						console.log(data.data)
 						that.contentData = data.data.data;
 					}
 				})
@@ -125,26 +123,30 @@
 				console.log(value);
 			},
 			//================列表 start =============
-			getList() {
-				var data = {
-					column: "" //需要的字段名
-				};
-				if (this.last_id) { //说明已有数据，目前处于上拉加载
-					data.minId = this.last_id;
-					data.time = new Date().getTime() + "";
-					data.pageSize = 10;
+			getList(type) {
+				let that = this;
+				//上拉加载更多
+				if( type == 1){
+					this.pageStart += 1;
+				}else{//下拉刷新或第一次进入
+					this.pageStart = 0;
 				}
+				var data = {
+					pageStart:this.pageStart,
+					pageNum:this.pageNum
+				};
+				
 				uni.request({
-					url: 'https://unidemo.dcloud.net.cn/api/news',
+					url: this.websiteUrl+'uniApp/news/getNewsList',
 					data: data,
 					success: (data) => {
-						uni.stopPullDownRefresh();
-						if (data.statusCode == 200) {
-							let list = this.setTime(data.data);
-							this.listData = this.reload ? list : this.listData.concat(list);
-							this.last_id = list[list.length - 1].id;
-							this.reload = false;
+ 						if( type == 1){
+							that.listData = that.listData.concat(data.data.data.data);
+						}else{//下拉刷新或第一次进入
+							that.listData = data.data.data.data;
+							console.log(that.listData);
 						}
+						
 					},
 					fail: (data, code) => {
 						uni.stopPullDownRefresh();
@@ -157,11 +159,10 @@
 				// 					e.published_at = dateUtils.format(e.published_at);
 				// 				}
 				let detail = {
-					author_name: e.author_name,
-					cover: e.cover,
+					author: e.author,
+					image: e.image,
 					id: e.id,
-					post_id: e.post_id,
-					published_at: e.published_at,
+					created: e.created,
 					title: e.title
 				}
 				uni.navigateTo({
@@ -173,11 +174,10 @@
 				var newItems = [];
 				items.forEach((e) => {
 					newItems.push({
-						author_name: e.author_name,
-						cover: e.cover,
+						author: e.author,
+						image: e.image,
 						id: e.id,
-						post_id: e.post_id,
-						published_at: dateUtils.format(e.published_at),
+						created: dateUtils.format(e.created),
 						title: e.title
 					});
 				});
