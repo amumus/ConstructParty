@@ -462,6 +462,21 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var _uniMediaList = _interopRequireDefault(__webpack_require__(/*! @/components/uni-media-list/uni-media-list.vue */ "../../../../HBuilderProjects/ConstructParty/ConstructParty/components/uni-media-list/uni-media-list.vue"));
 var _uniLoadMore = _interopRequireDefault(__webpack_require__(/*! @/components/uni-load-more/uni-load-more.vue */ "../../../../HBuilderProjects/ConstructParty/ConstructParty/components/uni-load-more/uni-load-more.vue"));
 
@@ -476,6 +491,9 @@ var _util = __webpack_require__(/*! @/common/util.js */ "../../../../HBuilderPro
 
   data: function data() {
     return {
+      // 列表页
+      pageStart: 0,
+      pageNum: 5,
       loadingText: {
         contentdown: '上拉加载更多',
         contentrefresh: '正在加载...',
@@ -484,31 +502,31 @@ var _util = __webpack_require__(/*! @/common/util.js */ "../../../../HBuilderPro
       scrollLeft: 0,
       refreshing: false,
       refreshText: '下拉可以刷新',
-      newsList: [],
+      videoList: [],
       tabIndex: 0,
       tabBars: [{
         name: '最新',
-        id: 0,
+        video_type: 0,
         ref: 'new' },
       {
         name: '新闻联播',
-        id: 23,
+        video_type: 1,
         ref: 'company' },
       {
         name: '校园生活',
-        id: 223,
+        video_type: 2,
         ref: 'content' },
       {
         name: '人物',
-        id: 221,
+        video_type: 3,
         ref: 'xiaofei' },
       {
         name: '文化',
-        id: 225,
+        video_type: 4,
         ref: 'yule' },
       {
         name: '理论',
-        id: 208,
+        video_type: 5,
         ref: 'qukuailian' }] };
 
 
@@ -516,63 +534,59 @@ var _util = __webpack_require__(/*! @/common/util.js */ "../../../../HBuilderPro
   onLoad: function onLoad() {var _this = this;
     // 初始化列表信息
     this.tabBars.forEach(function (tabBar) {
-      _this.newsList.push({
+      _this.videoList.push({
         data: [],
         requestParams: {
           columnId: tabBar.id,
           minId: 0,
           pageSize: 10,
-          column: 'id,post_id,title,author_name,cover,published_at,comments_count' },
+          column: 'id,title,author,image,created,content' },
 
         loadingText: '加载中...' });
 
     });
-    this.getList();
+    this.getList(0);
   },
   methods: {
-    getList: function getList() {var _this2 = this;var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      var activeTab = this.newsList[this.tabIndex];
-      activeTab.requestParams.time = new Date().getTime() + '';
-      if (action === 1) {
-        activeTab.requestParams.minId = 0;
+    getList: function getList(type) {var _this2 = this;
+      var that = this;
+      console.log("进入getList ， type = " + type);
+      //上拉加载更多
+      if (type == 1) {
+        this.pageStart += 1;
+      } else {//下拉刷新或第一次进入
+        this.pageStart = 0;
+      }
+      console.log("===" + this.pageStart + "===");
+      var data = {
+        pageStart: this.pageStart,
+        pageNum: this.pageNum };
+
+      if (this.tabIndex != 0) {
+        data.video_type = this.tabIndex;
       }
       uni.request({
-        url: 'https://unidemo.dcloud.net.cn/api/news',
-        data: activeTab.requestParams,
+        url: this.websiteUrl + 'uniApp/video/listVideo',
+        data: data,
         success: function success(result) {
-          if (result.statusCode == 200) {
-            var data = result.data.map(function (news) {
-              return {
-                id: news.id,
-                article_type: 1,
-                datetime: (0, _util.friendlyDate)(new Date(news.published_at.replace(/\-/g, '/')).getTime()),
-                title: news.title,
-                image_url: news.cover,
-                source: news.author_name,
-                comment_count: news.comments_count,
-                post_id: news.post_id };
-
-            });
-            if (action === 1) {
-              activeTab.data = data;
-              _this2.refreshing = false;
-            } else {
-              data.forEach(function (news) {
-                activeTab.data.push(news);
-              });
-            }
-            activeTab.requestParams.minId = data[data.length - 1].id;
+          console.log(result);
+          _this2.refreshing = false;
+          if (type == 1) {
+            that.videoList = that.videoList.concat(result.data.data.list);
+          } else {//下拉刷新或第一次进入
+            that.videoList = result.data.data.list;
+            // console.log(that.videoList);
           }
         } });
 
     },
     goDetail: function goDetail(detail) {
       uni.navigateTo({
-        url: '/pages/study/video/video-detial?query=' + encodeURIComponent(JSON.stringify(detail)) });
+        url: '/pages/study/video/video-detial?detailDate=' + encodeURIComponent(JSON.stringify(detail)) });
 
     },
     loadMore: function loadMore() {
-      this.getList(2);
+      this.getList(1);
     },
     changeTab: function () {var _changeTab = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(event) {var index, tabBar, tabBarScrollLeft, width, i, result, winWidth, nowElement, nowWidth, activeTab;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
                 index = event.detail.current;if (!
@@ -602,9 +616,9 @@ var _util = __webpack_require__(/*! @/common/util.js */ "../../../../HBuilderPro
                 this.tabIndex = index;
 
                 // 首次切换后加载数据
-                activeTab = this.newsList[this.tabIndex];
+                activeTab = this.videoList[this.tabIndex];
                 if (activeTab.data.length === 0) {
-                  this.getList();
+                  this.getList(0);
                 }case 30:case "end":return _context.stop();}}}, _callee, this);}));function changeTab(_x) {return _changeTab.apply(this, arguments);}return changeTab;}(),
 
     getNodeSize: function getNodeSize(node) {
@@ -617,7 +631,7 @@ var _util = __webpack_require__(/*! @/common/util.js */ "../../../../HBuilderPro
     onRefresh: function onRefresh(event) {
       this.refreshText = '正在刷新...';
       this.refreshing = true;
-      this.getList();
+      this.getList(0);
     },
     getElSize: function getElSize(id) {//得到元素的size
       return new Promise(function (res, rej) {
@@ -629,20 +643,21 @@ var _util = __webpack_require__(/*! @/common/util.js */ "../../../../HBuilderPro
         }).exec();
       });
     },
-    tapTab: function () {var _tapTab = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2(index) {var tabBar, tabBarScrollLeft, activeTab;return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:if (!(
-                this.tabIndex === index)) {_context2.next = 4;break;}return _context2.abrupt("return",
-                false);case 4:_context2.next = 6;return (
+    tapTab: function () {var _tapTab = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2(index) {var tabBar, tabBarScrollLeft, activeTab;return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0: //点击tab-bar
+                console.log(index);if (!(
+                this.tabIndex === index)) {_context2.next = 5;break;}return _context2.abrupt("return",
+                false);case 5:_context2.next = 7;return (
 
-                  this.getElSize('tab-bar'));case 6:tabBar = _context2.sent;
+                  this.getElSize('tab-bar'));case 7:tabBar = _context2.sent;
                 tabBarScrollLeft = tabBar.scrollLeft; //点击的时候记录并设置scrollLeft
                 this.scrollLeft = tabBarScrollLeft;
                 this.isClickChange = true;
                 this.tabIndex = index;
                 // 首次切换后加载数据
-                activeTab = this.newsList[this.tabIndex];
+                activeTab = this.videoList[this.tabIndex];
                 if (activeTab.data.length === 0) {
-                  this.getList();
-                }case 13:case "end":return _context2.stop();}}}, _callee2, this);}));function tapTab(_x2) {return _tapTab.apply(this, arguments);}return tapTab;}() } };exports.default = _default;
+                  this.getList(0);
+                }case 14:case "end":return _context2.stop();}}}, _callee2, this);}));function tapTab(_x2) {return _tapTab.apply(this, arguments);}return tapTab;}() } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
 
 /***/ }),
@@ -1716,73 +1731,41 @@ var render = function() {
         })
       ),
       _c(
-        "swiper",
-        {
-          staticClass: "swiper-box",
-          attrs: {
-            current: _vm.tabIndex,
-            duration: "300",
-            eventid: "d310870c-3"
-          },
-          on: { change: _vm.changeTab }
-        },
-        _vm._l(_vm.newsList, function(tabItem, tabIndex) {
+        "view",
+        { staticClass: "uni-list" },
+        _vm._l(_vm.videoList, function(value, key) {
           return _c(
-            "swiper-item",
-            { key: tabIndex, attrs: { mpcomid: "d310870c-2-" + tabIndex } },
+            "view",
+            {
+              key: key,
+              staticClass: "uni-list-cell",
+              attrs: {
+                "hover-class": "uni-list-cell-hover",
+                eventid: "d310870c-1-" + key
+              },
+              on: {
+                click: function($event) {
+                  _vm.goDetail(value)
+                }
+              }
+            },
             [
-              _c(
-                "scroll-view",
-                {
-                  staticClass: "list",
-                  attrs: { "scroll-y": "", eventid: "d310870c-2-" + tabIndex },
-                  on: {
-                    scrolltolower: function($event) {
-                      _vm.loadMore(tabIndex)
-                    }
-                  }
-                },
-                [
-                  _vm._l(tabItem.data, function(newsItem, newsIndex) {
-                    return _c(
-                      "block",
-                      { key: newsIndex },
-                      [
-                        _c("uni-media-list", {
-                          attrs: {
-                            data: newsItem,
-                            eventid: "d310870c-1-" + tabIndex + "-" + newsIndex,
-                            mpcomid: "d310870c-0-" + tabIndex + "-" + newsIndex
-                          },
-                          on: {
-                            click: function($event) {
-                              _vm.goDetail(newsItem)
-                            }
-                          }
-                        })
-                      ],
-                      1
-                    )
-                  }),
-                  _c(
-                    "view",
-                    { staticClass: "uni-tab-bar-loading" },
-                    [
-                      _c("uni-load-more", {
-                        attrs: {
-                          loadingType: tabItem.loadingText,
-                          contentText: _vm.loadingText,
-                          mpcomid: "d310870c-1-" + tabIndex
-                        }
-                      })
-                    ],
-                    1
-                  )
-                ],
-                2
-              )
-            ],
-            1
+              _c("view", { staticClass: "uni-media-list" }, [
+                _c("image", {
+                  staticClass: "uni-media-list-logo",
+                  attrs: { src: value.img }
+                }),
+                _c("view", { staticClass: "uni-media-list-body" }, [
+                  _c("view", { staticClass: "uni-media-list-text-top" }, [
+                    _vm._v(_vm._s(value.name))
+                  ]),
+                  _c("view", { staticClass: "uni-media-list-text-bottom" }, [
+                    _c("text", [_vm._v(_vm._s(value.author))]),
+                    _c("text", [_vm._v(_vm._s(value.created))])
+                  ])
+                ])
+              ])
+            ]
           )
         })
       )

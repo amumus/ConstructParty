@@ -4,7 +4,8 @@
   "description": "## 运行方式 将项目拖入[HbuilderX](http://www.dcloud.io/hbuilderx.html),直接运行即可",
   "main": "main.js",
   "dependencies": {
-    "@dcloudio/uni-ui": "0.0.3"
+    "@dcloudio/uni-ui": "0.0.3",
+    "vue-echarts": "^4.0.1"
   },
   "devDependencies": {},
   "scripts": {

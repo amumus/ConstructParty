@@ -142,47 +142,24 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _service = _interopRequireDefault(__webpack_require__(/*! ../../service.js */ "../../../../HBuilderProjects/ConstructParty/ConstructParty/service.js"));
-var _vuex = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var _default =
-
-
-
-
-{
+// import service from '../../service.js';
+//     import {
+//         mapState,
+//         mapMutations
+//     } from 'vuex'
+// 
+var _default = {
   data: function data() {
     return {
       providerList: [],
       hasProvider: false,
       account: '',
       password: '',
-      positionTop: 0 };
-
+      positionTop: 0
+      // forcedLogin:false
+    };
   },
-  computed: (0, _vuex.mapState)(['forcedLogin']),
-  methods: _objectSpread({},
-  (0, _vuex.mapMutations)(['login']), {
-    initProvider: function initProvider() {var _this = this;
-      var filters = ['weixin', 'qq', 'sinaweibo'];
-      uni.getProvider({
-        service: 'oauth',
-        success: function success(res) {
-          if (res.provider && res.provider.length) {
-            for (var i = 0; i < res.provider.length; i++) {
-              if (~filters.indexOf(res.provider[i])) {
-                _this.providerList.push({
-                  value: res.provider[i],
-                  image: '../../static/img/' + res.provider[i] + '.png' });
-
-              }
-            }
-            _this.hasProvider = true;
-          }
-        },
-        fail: function fail(err) {
-          console.error('获取服务供应商失败：' + JSON.stringify(err));
-        } });
-
-    },
+  methods: {
     initPosition: function initPosition() {
       /**
                                             * 使用 absolute 定位，并且设置 bottom 值进行定位。软键盘弹出时，底部会因为窗口变化而被顶上来。
@@ -190,11 +167,11 @@ var _vuex = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.j
                                             */
       this.positionTop = uni.getSystemInfoSync().windowHeight - 100;
     },
-    bindLogin: function bindLogin() {
+    bindLogin: function bindLogin() {var _this = this;
       /**
-                                      * 客户端对账号信息进行一些必要的校验。
-                                      * 实际开发中，根据业务需要进行处理，这里仅做示例。
-                                      */
+                                                        * 客户端对账号信息进行一些必要的校验。
+                                                        * 实际开发中，根据业务需要进行处理，这里仅做示例。
+                                                        */
       if (this.account.length < 5) {
         uni.showToast({
           icon: 'none',
@@ -215,60 +192,66 @@ var _vuex = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.j
          * 实际开发中，使用 uni.request 将账号信息发送至服务端，客户端在回调函数中获取结果信息。
          */
       var data = {
-        account: this.account,
+        identityCode: this.account,
         password: this.password };
 
-      var validUser = _service.default.getUsers().some(function (user) {
-        return data.account === user.account && data.password === user.password;
-      });
-      if (validUser) {
-        this.toMain(this.account);
-      } else {
-        uni.showToast({
-          icon: 'none',
-          title: '用户账号或密码不正确' });
+      //                 const validUser = service.getUsers().some(function (user) {
+      //                     return data.account === user.account && data.password === user.password;
+      //                 });
+      uni.request({
+        url: this.websiteUrl + '/uniApp/user/login',
+        data: data,
+        success: function success(result) {
+          console.log(result.data.data);
+          //登录成功
+          if (result.data.status == 1) {
+            uni.setStorageSync("name", result.data.data.name);
+            uni.setStorageSync("nickName", result.data.data.userName);
+            uni.setStorageSync("email", result.data.data.email);
+            uni.setStorageSync("identityCode", result.data.data.identityCode);
+            uni.setStorageSync("college", result.data.data.college);
+            uni.setStorageSync("major", result.data.data.major);
+            uni.setStorageSync("phone", result.data.data.phone);
+            uni.setStorageSync("userImage", result.data.data.headImg);
+            uni.setStorageSync("id", result.data.data.id);
 
-      }
-    },
-    oauth: function oauth(value) {var _this2 = this;
-      uni.login({
-        provider: value,
-        success: function success(res) {
-          uni.getUserInfo({
-            provider: value,
-            success: function success(infoRes) {
-              /**
-                                                 * 实际开发中，获取用户信息后，需要将信息上报至服务端。
-                                                 * 服务端可以用 userInfo.openId 作为用户的唯一标识新增或绑定用户信息。
-                                                 */
-              _this2.toMain(infoRes.userInfo.nickName);
-            } });
+            _this.toMain();
+          } else {
+            uni.showToast({
+              icon: 'none',
+              title: '用户账号或密码不正确' });
+
+          }
 
         },
-        fail: function fail(err) {
-          console.error('授权登录失败：' + JSON.stringify(err));
+        fail: function fail(data, code) {
+          uni.showToast({
+            icon: 'none',
+            title: '服务器出问题了，正在努力恢复中' });
+
         } });
 
+
     },
-    toMain: function toMain(userName) {
-      this.login(userName);
+    toMain: function toMain() {
       /**
-                             * 强制登录时使用reLaunch方式跳转过来
-                            * 返回首页也使用reLaunch方式
-                             */
-      if (this.forcedLogin) {
-        uni.reLaunch({
-          url: '../main/main' });
+                                * 强制登录时使用reLaunch方式跳转过来
+                               * 返回首页也使用reLaunch方式
+                                */
+      //                 if (this.forcedLogin) {
+      //                     uni.reLaunch({
+      //                         url: '../user/user',
+      //                     });
+      //                 } else {
+      uni.navigateBack();
+      // }
 
-      } else {
-        uni.navigateBack();
-      }
+    } },
 
-    } }),
-
-  onLoad: function onLoad() {
+  onLoad: function onLoad(e) {
     this.initPosition();
-    this.initProvider();
+    // this.forcedLogin = e.forcedLogin;
+    // this.initProvider();
   } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
 
@@ -303,7 +286,7 @@ var render = function() {
   return _c("view", { staticClass: "content" }, [
     _c("view", { staticClass: "input-group" }, [
       _c("view", { staticClass: "input-row border" }, [
-        _c("text", { staticClass: "title" }, [_vm._v("账号：")]),
+        _c("text", { staticClass: "title" }, [_vm._v("学号：")]),
         _c("input", {
           directives: [
             {
@@ -315,7 +298,7 @@ var render = function() {
           ],
           attrs: {
             type: "text",
-            placeholder: "请输入账号",
+            placeholder: "请输入学号",
             eventid: "4c071713-0"
           },
           domProps: { value: _vm.account },
@@ -383,32 +366,7 @@ var render = function() {
         _c("navigator", { attrs: { url: "../pwd/pwd" } }, [_vm._v("忘记密码")])
       ],
       1
-    ),
-    _vm.hasProvider
-      ? _c(
-          "view",
-          { staticClass: "oauth-row", style: { top: _vm.positionTop + "px" } },
-          _vm._l(_vm.providerList, function(provider, index) {
-            return _c(
-              "view",
-              { key: provider.value, staticClass: "oauth-image" },
-              [
-                _c("image", {
-                  attrs: {
-                    src: provider.image,
-                    eventid: "4c071713-3-" + index
-                  },
-                  on: {
-                    tap: function($event) {
-                      _vm.oauth(provider.value)
-                    }
-                  }
-                })
-              ]
-            )
-          })
-        )
-      : _vm._e()
+    )
   ])
 }
 var staticRenderFns = []

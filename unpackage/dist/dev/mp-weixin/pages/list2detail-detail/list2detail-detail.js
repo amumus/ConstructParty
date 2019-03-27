@@ -134,15 +134,60 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 {
   data: function data() {
     return {
+      id: '', //用户id
       title: 'list-triplex-row',
       banner: {},
-      htmlString: "" };
-
+      htmlString: "",
+      type: 1, //1代表页面类型是新闻
+      defaultImgUrl: "../../static/img/logo.png",
+      // defaultImgUrl:"https://construct-party-1256364044.cos.ap-guangzhou.myqcloud.com/video/1.jpg"
+      commentList: [],
+      pageNum: 5, //评论数
+      pageStart: 0, //评论页数
+      text: '' //评论内容
+    };
   },
   onLoad: function onLoad(event) {
+    uni.showLoading({
+      title: '加载中' });
+
     // 目前在某些平台参数会被主动 decode，暂时这样处理。
     try {
       this.banner = JSON.parse(decodeURIComponent(event.detailDate));
@@ -154,6 +199,7 @@ __webpack_require__.r(__webpack_exports__);
     uni.setNavigationBarTitle({
       title: this.banner.title });
 
+    this.getCommentList();
   },
   methods: {
     getDetail: function getDetail() {var _this = this;
@@ -164,12 +210,136 @@ __webpack_require__.r(__webpack_exports__);
           _this.htmlString = data.data.data.newsContent.content.replace(/\\/g, "").replace(/<img/g,
           "<img style=\"width:100%;\"");
           // this.htmlString = data.data.data.newsContent.content;
-
+          uni.hideLoading();
         },
         fail: function fail() {
           console.log('fail');
         } });
 
+    },
+    getCommentList: function getCommentList() {
+      var that = this;
+      var data = {
+        type: that.type,
+        targetId: that.banner.id,
+        pageNum: that.pageNum,
+        pageStart: that.pageStart };
+
+      uni.request({
+        url: this.websiteUrl + 'uniApp/comment/getCommentListByIdAndType',
+        data: data,
+        success: function success(result) {
+          that.commentList = result.data.data.list;
+        },
+        fail: function fail(data, code) {
+          uni.stopPullDownRefresh();
+          console.log('fail' + JSON.stringify(data));
+        } });
+
+    },
+    checklogin: function checklogin() {
+      this.id = uni.getStorageSync('id');
+      if (this.id == null || this.id == '') {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    send: function send(e) {
+      if (!this.checklogin()) {
+        uni.showModal({
+          content: '请登录后再操作',
+          confirmText: '马上登录',
+          success: function success(res) {
+            if (res.confirm) {
+              uni.navigateTo({
+                url: '../login/login' });
+
+            } else if (res.cancel) {
+
+            }
+          } });
+
+        return false;
+      }
+      if (!this.text) {
+        uni.showToast({
+          title: '请输入评论内容',
+          icon: 'none' });
+
+        return false;
+      }
+      var self = this;
+      // 				self.replylist.unshift({
+      // 					text: this.text,
+      // 					avatar: this.userinfo.avatarUrl,
+      // 					nickName: this.userinfo.nickName,
+      // 					pubtime: '刚刚'
+      // 				});
+      var data = {
+        userId: self.id,
+        type: self.type,
+        targetId: self.banner.id,
+        parentId: 0,
+        rootId: 0,
+        parentUserId: 0,
+        commentContent: self.text };
+
+
+      uni.request({
+        url: this.websiteUrl + 'uniApp/comment/addComment',
+        data: data,
+        success: function success(result) {
+          //评论成功，才重新请求comment列表
+          if (result.data.status == 1) {
+            self.getCommentList();
+          } else {
+            uni.showToast({
+              title: result.data.message,
+              duration: 2000 });
+
+          }
+        } });
+
+
+      // 				uni.request({
+      // 					url: util.apiurl + 'syj/index/setpinglun',
+      // 					method: 'POST',
+      // 					data: {
+      // 						text: self.text,
+      // 						id: self.id,
+      // 						token: self.token,
+      // 						shebei: util.shebei
+      // 					},
+      // 					success: ret => {
+      // 						if (ret.statusCode == 200 && ret.data.code < 1) {
+      // 							self.text = '';
+      // 							uni.showToast({
+      // 								title: '审核后显示'
+      // 							});
+      // 							setTimeout(function() {
+      // 								uni.hideLoading();
+      // 							}, 1000);
+      // 						} else {
+      // 							uni.showToast({
+      // 								title: ret.data.msg,
+      // 								icon: 'none'
+      // 							});
+      // 							setTimeout(function() {
+      // 								uni.hideLoading();
+      // 							}, 1000);
+      // 						}
+      // 					},
+      // 					fail: function() {
+      // 						uni.hideLoading();
+      // 					},
+      // 					complete: function() {
+      // 						this.loading = false;
+      // 					},
+      // 					header: {
+      // 						auth: util.httpauth
+      // 					}
+      // 				});
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
 
@@ -219,7 +389,7 @@ var render = function() {
         ]),
         _c("text", { staticClass: "article-text" }, [_vm._v("发表于")]),
         _c("text", { staticClass: "article-time" }, [
-          _vm._v(_vm._s(_vm.banner.created))
+          _vm._v(_vm._s(_vm.banner.publish_data))
         ])
       ]),
       _c(
@@ -239,7 +409,78 @@ var render = function() {
               mpcomid: "650cc79f-1"
             }
           })
-        : _vm._e()
+        : _vm._e(),
+      _c(
+        "view",
+        { staticClass: "section" },
+        [
+          _c(
+            "form",
+            { attrs: { eventid: "650cc79f-1" }, on: { submit: _vm.send } },
+            [
+              _c("textarea", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.text,
+                    expression: "text"
+                  }
+                ],
+                attrs: { placeholder: "期待你的神评论", eventid: "650cc79f-0" },
+                domProps: { value: _vm.text },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.text = $event.target.value
+                  }
+                }
+              }),
+              _c("button", { attrs: { "form-type": "submit" } }, [
+                _vm._v("发表评论")
+              ])
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _c("view", { staticClass: "uni-padding-wrap" }, [
+        _c(
+          "view",
+          { staticClass: "uni-comment" },
+          _vm._l(_vm.commentList, function(value, key) {
+            return _c("view", { key: key, staticClass: "uni-comment-list" }, [
+              _c("view", { staticClass: "uni-comment-face" }, [
+                value.userImage == null || value.userImage == ""
+                  ? _c("image", {
+                      attrs: {
+                        src: "../../static/img/logo.png",
+                        mode: "widthFix"
+                      }
+                    })
+                  : _c("image", {
+                      attrs: { src: value.userImage, mode: "widthFix" }
+                    })
+              ]),
+              _c("view", { staticClass: "uni-comment-body" }, [
+                _c("view", { staticClass: "uni-comment-top" }, [
+                  _c("text", [_vm._v(_vm._s(value.userName))])
+                ]),
+                _c("view", { staticClass: "uni-comment-date" }, [
+                  _c("text", [_vm._v(_vm._s(value.publishDate))])
+                ]),
+                _c("view", { staticClass: "uni-comment-content" }, [
+                  _vm._v(_vm._s(value.commentContent))
+                ])
+              ])
+            ])
+          })
+        )
+      ]),
+      _c("view", { staticClass: "moreComment" }, [_vm._v("显示更多评论")])
     ],
     1
   )

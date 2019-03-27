@@ -63,6 +63,22 @@
 			"style":{
 				"navigationBarTitleText":"视频详情内容"
 			}
+		},{
+				"path": "pages/study/myscore/myscore",
+			"style": {
+				"navigationBarTitleText": "我的积分",
+				"enablePullDownRefresh": true
+			}
+		},{
+				"path": "pages/study/comment/myComment",
+			"style": {
+				"navigationBarTitleText": "我的评论"
+			}
+		},{
+			"path": "pages/study/report/myScoreReport",
+			"style": {
+				"navigationBarTitleText": "学习报表"
+			}
 		}
 	],
 	"tabBar": {

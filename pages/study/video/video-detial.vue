@@ -1,114 +1,111 @@
 <template>
 	<view>
-		<view class="banner">
-			<image class="banner-img" :src="banner.image_url"></image>
-			<view class="banner-title">{{banner.title}}</view>
-		</view>
-		<view class="article-meta">
-			<text class="article-author">{{banner.source}}</text>
-			<text class="article-text">发表于</text>
-			<text class="article-time">{{banner.datetime}}</text>
-		</view>
-		<view class="article-content">
-			<rich-text :nodes="content"></rich-text>
+		<page-head :title="title"></page-head>
+		<view class="uni-padding-wrap uni-common-mt">
+			<view>
+				<video id="myVideo" :src="banner.url"
+				 @error="videoErrorCallback" :danmu-list="danmuList" enable-danmu danmu-btn controls></video>
+			</view>
+			<!-- #ifndef MP-ALIPAY -->
+			<view class="uni-list uni-common-mt">
+				<view class="uni-list-cell">
+					<view>
+						<view class="uni-label">弹幕内容</view>
+					</view>
+					<view class="uni-list-cell-db">
+						<input v-model="danmuValue" class="uni-input" type="text" placeholder="在此处输入弹幕内容" />
+					</view>
+				</view>
+			</view>
+			<view class="uni-btn-v">
+				<button @click="sendDanmu" class="page-body-button">发送弹幕</button>
+			</view>
+			<view class="article-content">
+			    <rich-text :nodes="banner.content"></rich-text>
+			</view>
+			<!-- #endif -->
 		</view>
 	</view>
+	</view>
 </template>
-
 <script>
-	const FAIL_CONTENT = '<p>获取信息失败</p>';
 	export default {
 		data() {
 			return {
-				banner: {},
-				content: ''
-			}
-		},
-		onShareAppMessage() {
-			return {
-				title: this.banner.title,
-				path: '/pages/detail/detail?query=' + JSON.stringify(this.banner)
+				title: 'video',
+				src: '',
+				danmuList: [{
+						text: '第 1s 出现的弹幕',
+						color: '#ff0000',
+						time: 1
+					},
+					{
+						text: '第 3s 出现的弹幕',
+						color: '#ff00ff',
+						time: 3
+					}
+				],
+				danmuValue: '',
+				banner:{}
 			}
 		},
 		onLoad(event) {
-			// 目前在某些平台参数会被主动 decode，暂时这样处理。
+			 // 目前在某些平台参数会被主动 decode，暂时这样处理。
 			try {
-				this.banner = JSON.parse(decodeURIComponent(event.query));
+			    this.banner = JSON.parse(decodeURIComponent(event.detailDate));
 			} catch (error) {
-				this.banner = JSON.parse(event.query);
+			    this.banner = JSON.parse(event.detailDate);
 			}
-
-			this.getDetail();
+			// console.log(this.banner)
+			 this.getDetail();
 			uni.setNavigationBarTitle({
-				title: this.banner.title
+			    title: this.banner.name
 			});
 		},
+		onReady: function(res) {
+			// #ifndef MP-ALIPAY
+			this.videoContext = uni.createVideoContext('myVideo')
+			// #endif
+		},
 		methods: {
-			getDetail() {
-				uni.request({
-					url: 'https://unidemo.dcloud.net.cn/api/news/36kr/' + this.banner.post_id,
-					success: (result) => {
-						if (result.statusCode == 200) {
-							this.content = result.data.content;
-						} else {
-							this.content = FAIL_CONTENT;
-						}
-					}
+			sendDanmu: function() {
+				this.videoContext.sendDanmu({
+					text: this.danmuValue,
+					color: this.getRandomColor()
 				});
+				this.danmuValue = '';
+			},
+			videoErrorCallback: function(e) {
+				uni.showModal({
+					content: e.target.errMsg,
+					showCancel: false
+				})
+			},
+			getRandomColor: function() {
+				const rgb = []
+				for (let i = 0; i < 3; ++i) {
+					let color = Math.floor(Math.random() * 256).toString(16)
+					color = color.length == 1 ? '0' + color : color
+					rgb.push(color)
+				}
+				return '#' + rgb.join('')
+			},
+			getDetail : function(){
+				
 			}
 		}
 	}
 </script>
 
 <style>
-	.banner {
-		height: 360upx;
-		overflow: hidden;
-		position: relative;
-		background-color: #ccc;
+	video {
+		width: 750upx;
 	}
-
-	.banner-img {
-		width: 100%;
-	}
-
-	.banner-title {
-		max-height: 84upx;
-		overflow: hidden;
-		position: absolute;
-		left: 30upx;
-		bottom: 30upx;
-		width: 90%;
-		font-size: 32upx;
-		font-weight: 400;
-		line-height: 42upx;
-		color: white;
-		z-index: 11;
-	}
-
-	.article-meta {
-		padding: 20upx 40upx;
-		display: flex;
-		flex-direction: row;
-		justify-content: flex-start;
-		color: gray;
-	}
-
-	.article-text {
-		font-size: 26upx;
-		line-height: 50upx;
-		margin: 0 20upx;
-	}
-
-	.article-author,
-	.article-time {
-		font-size: 30upx;
-	}
-
+	
 	.article-content {
-		padding: 0 30upx;
-		overflow: hidden;
-		font-size: 30upx;
-		margin-bottom: 30upx;
+	    padding: 0 30upx;
+	    overflow: hidden;
+	    font-size: 30upx;
+	    margin-bottom: 30upx;
 	}
 </style>

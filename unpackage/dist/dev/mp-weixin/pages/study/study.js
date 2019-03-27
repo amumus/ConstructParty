@@ -293,11 +293,6 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 
 
 
-
-
-
-
-
 var _uniGrid = _interopRequireDefault(__webpack_require__(/*! @dcloudio/uni-ui/lib/uni-grid/uni-grid.vue */ "../../../../HBuilderProjects/ConstructParty/ConstructParty/node_modules/@dcloudio/uni-ui/lib/uni-grid/uni-grid.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} // import {uniGrid} from '@dcloudio/uni-ui'
 var _default = {
   components: { uniGrid: _uniGrid.default },
@@ -310,13 +305,19 @@ var _default = {
 
           break;
         case 1:
-          console.log("1");
+          uni.navigateTo({
+            url: "/pages/study/myscore/myscore" });
+
           break;
         case 2:
-          console.log("1");
+          uni.navigateTo({
+            url: "/pages/study/report/myScoreReport" });
+
           break;
         case 3:
-          console.log("1");
+          uni.navigateTo({
+            url: "/pages/study/comment/myComment" });
+
           break;
         case 4:
           console.log("1");
@@ -438,10 +439,6 @@ var render = function() {
               text: "视频学习"
             },
             {
-              image: "https://img-cdn-qiniu.dcloud.net.cn/img/lindang.png",
-              text: "党史"
-            },
-            {
               image: "https://img-cdn-qiniu.dcloud.net.cn/img/laoren.png",
               text: "学习积分"
             },
@@ -451,23 +448,7 @@ var render = function() {
             },
             {
               image: "https://img-cdn-qiniu.dcloud.net.cn/img/maozi.png",
-              text: "帽子"
-            },
-            {
-              image: "https://img-cdn-qiniu.dcloud.net.cn/img/shoutao.png",
-              text: "手套"
-            },
-            {
-              image: "https://img-cdn-qiniu.dcloud.net.cn/img/xueqiao.png",
-              text: "雪橇"
-            },
-            {
-              image: "https://img-cdn-qiniu.dcloud.net.cn/img/xunlu.png",
-              text: "驯鹿"
-            },
-            {
-              image: "https://img-cdn-qiniu.dcloud.net.cn/img/xuehua.png",
-              text: "雪花"
+              text: "我的评论"
             }
           ],
           "column-num": "3",

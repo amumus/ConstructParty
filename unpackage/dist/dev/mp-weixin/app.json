@@ -8,7 +8,10 @@
     "pages/study/study",
     "pages/list2detail-detail/list2detail-detail",
     "pages/study/video/video-list",
-    "pages/study/video/video-detial"
+    "pages/study/video/video-detial",
+    "pages/study/myscore/myscore",
+    "pages/study/comment/myComment",
+    "pages/study/report/myScoreReport"
   ],
   "subPackages": [],
   "window": {

@@ -113,7 +113,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
 
 
 
@@ -131,44 +131,81 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var FAIL_CONTENT = '<p>获取信息失败</p>';var _default =
+
+
+
+
+
+
+
+
+
+
+
+
+
 {
   data: function data() {
     return {
-      banner: {},
-      content: '' };
+      title: 'video',
+      src: '',
+      danmuList: [{
+        text: '第 1s 出现的弹幕',
+        color: '#ff0000',
+        time: 1 },
 
-  },
-  onShareAppMessage: function onShareAppMessage() {
-    return {
-      title: this.banner.title,
-      path: '/pages/detail/detail?query=' + JSON.stringify(this.banner) };
+      {
+        text: '第 3s 出现的弹幕',
+        color: '#ff00ff',
+        time: 3 }],
+
+
+      danmuValue: '',
+      banner: {} };
 
   },
   onLoad: function onLoad(event) {
     // 目前在某些平台参数会被主动 decode，暂时这样处理。
     try {
-      this.banner = JSON.parse(decodeURIComponent(event.query));
+      this.banner = JSON.parse(decodeURIComponent(event.detailDate));
     } catch (error) {
-      this.banner = JSON.parse(event.query);
+      this.banner = JSON.parse(event.detailDate);
     }
-
+    // console.log(this.banner)
     this.getDetail();
     uni.setNavigationBarTitle({
-      title: this.banner.title });
+      title: this.banner.name });
+
+  },
+  onReady: function onReady(res) {
+
+    this.videoContext = uni.createVideoContext('myVideo');
 
   },
   methods: {
-    getDetail: function getDetail() {var _this = this;
-      uni.request({
-        url: 'https://unidemo.dcloud.net.cn/api/news/36kr/' + this.banner.post_id,
-        success: function success(result) {
-          if (result.statusCode == 200) {
-            _this.content = result.data.content;
-          } else {
-            _this.content = FAIL_CONTENT;
-          }
-        } });
+    sendDanmu: function sendDanmu() {
+      this.videoContext.sendDanmu({
+        text: this.danmuValue,
+        color: this.getRandomColor() });
+
+      this.danmuValue = '';
+    },
+    videoErrorCallback: function videoErrorCallback(e) {
+      uni.showModal({
+        content: e.target.errMsg,
+        showCancel: false });
+
+    },
+    getRandomColor: function getRandomColor() {
+      var rgb = [];
+      for (var i = 0; i < 3; ++i) {
+        var color = Math.floor(Math.random() * 256).toString(16);
+        color = color.length == 1 ? '0' + color : color;
+        rgb.push(color);
+      }
+      return '#' + rgb.join('');
+    },
+    getDetail: function getDetail() {
 
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
@@ -201,38 +238,98 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("view", [
-    _c("view", { staticClass: "banner" }, [
-      _c("image", {
-        staticClass: "banner-img",
-        attrs: { src: _vm.banner.image_url }
-      }),
-      _c("view", { staticClass: "banner-title" }, [
-        _vm._v(_vm._s(_vm.banner.title))
+  return _c(
+    "view",
+    [
+      _c("page-head", { attrs: { title: _vm.title, mpcomid: "6cc88b86-0" } }),
+      _c("view", { staticClass: "uni-padding-wrap uni-common-mt" }, [
+        _c("view", [
+          _c("video", {
+            attrs: {
+              id: "myVideo",
+              src: _vm.banner.url,
+              "danmu-list": _vm.danmuList,
+              "enable-danmu": "",
+              "danmu-btn": "",
+              controls: "",
+              eventid: "6cc88b86-0"
+            },
+            on: { error: _vm.videoErrorCallback }
+          })
+        ]),
+        _c("view", { staticClass: "uni-list uni-common-mt" }, [
+          _c("view", { staticClass: "uni-list-cell" }, [
+            _vm._m(0),
+            _c("view", { staticClass: "uni-list-cell-db" }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.danmuValue,
+                    expression: "danmuValue"
+                  }
+                ],
+                staticClass: "uni-input",
+                attrs: {
+                  type: "text",
+                  placeholder: "在此处输入弹幕内容",
+                  eventid: "6cc88b86-1"
+                },
+                domProps: { value: _vm.danmuValue },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.danmuValue = $event.target.value
+                  }
+                }
+              })
+            ])
+          ])
+        ]),
+        _c(
+          "view",
+          { staticClass: "uni-btn-v" },
+          [
+            _c(
+              "button",
+              {
+                staticClass: "page-body-button",
+                attrs: { eventid: "6cc88b86-2" },
+                on: { click: _vm.sendDanmu }
+              },
+              [_vm._v("发送弹幕")]
+            )
+          ],
+          1
+        ),
+        _c(
+          "view",
+          { staticClass: "article-content" },
+          [
+            _c("rich-text", {
+              attrs: { nodes: _vm.banner.content, mpcomid: "6cc88b86-1" }
+            })
+          ],
+          1
+        )
       ])
-    ]),
-    _c("view", { staticClass: "article-meta" }, [
-      _c("text", { staticClass: "article-author" }, [
-        _vm._v(_vm._s(_vm.banner.source))
-      ]),
-      _c("text", { staticClass: "article-text" }, [_vm._v("发表于")]),
-      _c("text", { staticClass: "article-time" }, [
-        _vm._v(_vm._s(_vm.banner.datetime))
-      ])
-    ]),
-    _c(
-      "view",
-      { staticClass: "article-content" },
-      [
-        _c("rich-text", {
-          attrs: { nodes: _vm.content, mpcomid: "6cc88b86-0" }
-        })
-      ],
-      1
-    )
-  ])
+    ],
+    1
+  )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("view", [
+      _c("view", { staticClass: "uni-label" }, [_vm._v("弹幕内容")])
+    ])
+  }
+]
 render._withStripped = true
 
 

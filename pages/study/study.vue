@@ -3,14 +3,9 @@
 		<image src="../../static/img/study_head.jpg"></image>
 		<uni-grid :data="[
     {image:'https://img-cdn-qiniu.dcloud.net.cn/img/shu.png',text:'视频学习'},
-    {image:'https://img-cdn-qiniu.dcloud.net.cn/img/lindang.png',text:'党史'},
     {image:'https://img-cdn-qiniu.dcloud.net.cn/img/laoren.png',text:'学习积分'},
     {image:'https://img-cdn-qiniu.dcloud.net.cn/img/liwu.png',text:'学习报表'},
-    {image:'https://img-cdn-qiniu.dcloud.net.cn/img/maozi.png',text:'帽子'},
-    {image:'https://img-cdn-qiniu.dcloud.net.cn/img/shoutao.png',text:'手套'},
-    {image:'https://img-cdn-qiniu.dcloud.net.cn/img/xueqiao.png',text:'雪橇'},
-    {image:'https://img-cdn-qiniu.dcloud.net.cn/img/xunlu.png',text:'驯鹿'},
-    {image:'https://img-cdn-qiniu.dcloud.net.cn/img/xuehua.png',text:'雪花'}]"
+    {image:'https://img-cdn-qiniu.dcloud.net.cn/img/maozi.png',text:'我的评论'}]"
 	 column-num="3"
 	 @click = 'bindClick'>
 		</uni-grid>
@@ -34,13 +29,19 @@
 						})
 						break;
 					case 1: 
-						console.log("1")
+						uni.navigateTo({
+							url:"/pages/study/myscore/myscore"
+						})
 						break;
 					case 2: 
-						console.log("1")
+						uni.navigateTo({
+							url:"/pages/study/report/myScoreReport"
+						})
 						break;
 					case 3: 
-						console.log("1")
+						uni.navigateTo({
+							url:"/pages/study/comment/myComment"
+						})
 						break;
 					case 4: 
 						console.log("1")

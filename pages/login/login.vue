@@ -2,8 +2,8 @@
     <view class="content">
         <view class="input-group">
             <view class="input-row border">
-                <text class="title">账号：</text>
-                <input type="text" v-model="account" placeholder="请输入账号">
+                <text class="title">学号：</text>
+                <input type="text" v-model="account" placeholder="请输入学号">
             </view>
             <view class="input-row">
                 <text class="title">密码：</text>
@@ -18,21 +18,21 @@
             <text>|</text>
             <navigator url="../pwd/pwd">忘记密码</navigator>
         </view>
-        <view class="oauth-row" v-if="hasProvider" v-bind:style="{top: positionTop + 'px'}">
+     <!--   <view class="oauth-row" v-if="hasProvider" v-bind:style="{top: positionTop + 'px'}">
             <view class="oauth-image" v-for="provider in providerList" :key="provider.value">
                 <image :src="provider.image" @tap="oauth(provider.value)"></image>
             </view>
-        </view>
+        </view> -->
     </view>
 </template>
 
 <script>
-    import service from '../../service.js';
-    import {
-        mapState,
-        mapMutations
-    } from 'vuex'
-
+    // import service from '../../service.js';
+//     import {
+//         mapState,
+//         mapMutations
+//     } from 'vuex'
+// 
     export default {
         data() {
             return {
@@ -40,34 +40,11 @@
                 hasProvider: false,
                 account: '',
                 password: '',
-                positionTop: 0
+                positionTop: 0,
+				// forcedLogin:false
             }
         },
-        computed: mapState(['forcedLogin']),
         methods: {
-            ...mapMutations(['login']),
-            initProvider() {
-                const filters = ['weixin', 'qq', 'sinaweibo'];
-                uni.getProvider({
-                    service: 'oauth',
-                    success: (res) => {
-                        if (res.provider && res.provider.length) {
-                            for (let i = 0; i < res.provider.length; i++) {
-                                if (~filters.indexOf(res.provider[i])) {
-                                    this.providerList.push({
-                                        value: res.provider[i],
-                                        image: '../../static/img/' + res.provider[i] + '.png'
-                                    });
-                                }
-                            }
-                            this.hasProvider = true;
-                        }
-                    },
-                    fail: (err) => {
-                        console.error('获取服务供应商失败：' + JSON.stringify(err));
-                    }
-                });
-            },
             initPosition() {
                 /**
                  * 使用 absolute 定位，并且设置 bottom 值进行定位。软键盘弹出时，底部会因为窗口变化而被顶上来。
@@ -100,60 +77,66 @@
                  * 实际开发中，使用 uni.request 将账号信息发送至服务端，客户端在回调函数中获取结果信息。
                  */
                 const data = {
-                    account: this.account,
+                    identityCode: this.account,
                     password: this.password
                 };
-                const validUser = service.getUsers().some(function (user) {
-                    return data.account === user.account && data.password === user.password;
-                });
-                if (validUser) {
-                    this.toMain(this.account);
-                } else {
-                    uni.showToast({
-                        icon: 'none',
-                        title: '用户账号或密码不正确',
-                    });
-                }
+//                 const validUser = service.getUsers().some(function (user) {
+//                     return data.account === user.account && data.password === user.password;
+//                 });
+				uni.request({
+					url: this.websiteUrl+'/uniApp/user/login',
+					data: data,
+					success: (result) => {
+						console.log(result.data.data)
+						//登录成功
+						if(result.data.status == 1){
+							uni.setStorageSync("name",result.data.data.name);
+							uni.setStorageSync("nickName",result.data.data.userName);
+							uni.setStorageSync("email",result.data.data.email);
+							uni.setStorageSync("identityCode",result.data.data.identityCode);
+							uni.setStorageSync("college",result.data.data.college);
+							uni.setStorageSync("major",result.data.data.major);
+							uni.setStorageSync("phone",result.data.data.phone);
+							uni.setStorageSync("userImage",result.data.data.headImg);
+							uni.setStorageSync("id",result.data.data.id);
+							
+							this.toMain();
+						}else{
+							uni.showToast({
+							    icon: 'none',
+							    title: '用户账号或密码不正确',
+							});
+						}
+						
+					},
+					fail: (data, code) => {
+						uni.showToast({
+						    icon: 'none',
+						    title: '服务器出问题了，正在努力恢复中',
+						});
+					}
+				})
+				
             },
-            oauth(value) {
-                uni.login({
-                    provider: value,
-                    success: (res) => {
-                        uni.getUserInfo({
-                            provider: value,
-                            success: (infoRes) => {
-                                /**
-                                 * 实际开发中，获取用户信息后，需要将信息上报至服务端。
-                                 * 服务端可以用 userInfo.openId 作为用户的唯一标识新增或绑定用户信息。
-                                 */
-                                this.toMain(infoRes.userInfo.nickName);
-                            }
-                        });
-                    },
-                    fail: (err) => {
-                        console.error('授权登录失败：' + JSON.stringify(err));
-                    }
-                });
-            },
-            toMain(userName) {
-                this.login(userName);
+            toMain() {
                 /**
                  * 强制登录时使用reLaunch方式跳转过来
 				 * 返回首页也使用reLaunch方式
                  */
-                if (this.forcedLogin) {
-                    uni.reLaunch({
-                        url: '../main/main',
-                    });
-                } else {
+//                 if (this.forcedLogin) {
+//                     uni.reLaunch({
+//                         url: '../user/user',
+//                     });
+//                 } else {
                     uni.navigateBack();
-                }
+                // }
 
             }
         },
-        onLoad() {
+        onLoad(e) {
             this.initPosition();
-            this.initProvider();
+			// this.forcedLogin = e.forcedLogin;
+            // this.initProvider();
         }
     }
 </script>

@@ -419,7 +419,7 @@ var render = function() {
                 ]),
                 _c("view", { staticClass: "uni-media-list-text-bottom" }, [
                   _c("text", [_vm._v(_vm._s(value.author))]),
-                  _c("text", [_vm._v(_vm._s(value.created))])
+                  _c("text", [_vm._v(_vm._s(value.publish_data))])
                 ])
               ])
             ])

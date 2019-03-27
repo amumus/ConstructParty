@@ -28,7 +28,7 @@
 						<view class="uni-media-list-text-top">{{value.title}}</view>
 						<view class="uni-media-list-text-bottom">
 							<text>{{value.author}}</text>
-							<text>{{value.created}}</text>
+							<text>{{value.publish_data}}</text>
 						</view>
 					</view>
 				</view>
