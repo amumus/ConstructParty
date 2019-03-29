@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/main/main",
+    "pages/study/comment/commentDetail",
     "pages/login/login",
     "pages/reg/reg",
     "pages/pwd/pwd",

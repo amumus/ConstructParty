@@ -1,5 +1,6 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页,
+		
 		{
 			"path": "pages/main/main",
 			"style": {
@@ -15,6 +16,11 @@
 						"color": "#007AFF"
 					}
 				}
+			}
+		},{
+			"path": "pages/study/comment/commentDetail",
+			"style": {
+				"navigationBarTitleText": "评论详情"
 			}
 		}, {
 			"path": "pages/login/login",

@@ -5,7 +5,7 @@
 				<view class="uni-list-cell" hover-class="uni-list-cell-hover">
 				<!-- <view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(value,key) in listData" :key="key" @click="goDetail(value)"> -->
 					<view class="uni-media-list">
-						<view class="uni-media-list-body">
+						<view class="uni-media-list-body" @click="bindClick">
 							<view class="uni-media-list-text-top">习近平抵达阿联酋阿布扎比，进领导层第一次会晤</view>
 							<view>
 								<text class="commentBody">你说得对</text>
@@ -25,6 +25,16 @@
 </template>
 
 <script>
+	
+	export default {
+		methods:{
+			bindClick(e){
+				uni.navigateTo({
+					url:"/pages/study/comment/commentDetail"
+				})
+			}
+		}
+	}
 </script>
 
 <style>

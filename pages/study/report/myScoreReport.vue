@@ -6,7 +6,7 @@
 			</view>
 			 <text class="navigate" @click="goBrowser" selectable>https://github.com/F-loat/mpvue-echarts</text> -->
 		<!-- </view> -->
-		<view style="background-image: url('https://construct-party-1256364044.cos.ap-guangzhou.myqcloud.com/score_bg.jpg');height: 300upx;width: 100%;">
+		<view style="background-image: url('https://construct-party-1256364044.cos.ap-guangzhou.myqcloud.com/score_bg.jpg');height: 300upx;width: 100%;display: block;">
 			<view style="height: 50upx;"></view>
 			<view style="font-size: 50upx ;color: #ff6699;margin-left:300upx;">总积分</view>
 			<text style="color: #997722;font-size: 90upx;margin-left:290upx;">500</text>
@@ -19,7 +19,7 @@
 			<mpvue-echarts :echarts="echarts" :onInit="pieInit" canvasId="pie" ref="pieChart" />
 		</view>
 		<view class="canvasView">
-			<view class="title">当月分数</view>
+			<view class="title">每月分数</view>
 			<mpvue-echarts :echarts="echarts" :onInit="lineInit" canvasId="line" ref="lineChart" />
 		</view>
 	</view>
@@ -72,7 +72,7 @@
 
 	let lineOption = {
 		animation: false,
-		color: ['#37A2DA', '#9FE6B8'],
+		color: ['#37A2DA'],
 		grid: {
 			x: 35,
 			x2: 10,
@@ -91,13 +91,9 @@
 			}
 		}],
 		series: [{
-			name: '蒸发量',
+			name: '分数',
 			type: 'line',
 			data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
-		}, {
-			name: '降水量',
-			type: 'line',
-			data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
 		}]
 	};
 

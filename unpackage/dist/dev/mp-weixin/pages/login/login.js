@@ -142,6 +142,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
 // import service from '../../service.js';
 //     import {
 //         mapState,
@@ -284,6 +287,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("view", { staticClass: "content" }, [
+    _vm._m(0),
     _c("view", { staticClass: "input-group" }, [
       _c("view", { staticClass: "input-row border" }, [
         _c("text", { staticClass: "title" }, [_vm._v("学号：")]),
@@ -349,7 +353,7 @@ var render = function() {
           "button",
           {
             staticClass: "primary",
-            attrs: { type: "primary", eventid: "4c071713-2" },
+            attrs: { type: "warn", eventid: "4c071713-2" },
             on: { tap: _vm.bindLogin }
           },
           [_vm._v("登录")]
@@ -369,7 +373,19 @@ var render = function() {
     )
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("view", { staticStyle: { "text-align": "center" } }, [
+      _c("image", {
+        staticStyle: { width: "300rpx", height: "300rpx" },
+        attrs: { src: "../../static/img/logo.jpg" }
+      })
+    ])
+  }
+]
 render._withStripped = true
 
 

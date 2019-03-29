@@ -1,5 +1,8 @@
 <template>
     <view class="content">
+		<view style="text-align: center;">
+			<image src="../../static/img/logo.jpg" style="width: 300upx;height: 300upx;"></image>
+		</view>
         <view class="input-group">
             <view class="input-row border">
                 <text class="title">学号：</text>
@@ -11,7 +14,7 @@
             </view>
         </view>
         <view class="btn-row">
-            <button type="primary" class="primary" @tap="bindLogin">登录</button>
+            <button type="warn" class="primary" @tap="bindLogin">登录</button>
         </view>
         <view class="action-row">
             <navigator url="../reg/reg">注册账号</navigator>
@@ -142,6 +145,8 @@
 </script>
 
 <style>
+	
+	
     .action-row {
         display: flex;
         flex-direction: row;
@@ -177,4 +182,8 @@
         height: 60px;
         margin: 20px;
     }
+	
+	.primary{
+		background-color:#d81e06;
+	}
 </style>

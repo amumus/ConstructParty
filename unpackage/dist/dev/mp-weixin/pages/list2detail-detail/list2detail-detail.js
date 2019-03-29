@@ -176,7 +176,7 @@ __webpack_require__.r(__webpack_exports__);
       banner: {},
       htmlString: "",
       type: 1, //1代表页面类型是新闻
-      defaultImgUrl: "../../static/img/logo.png",
+      defaultImgUrl: "../../static/img/headImage.png",
       // defaultImgUrl:"https://construct-party-1256364044.cos.ap-guangzhou.myqcloud.com/video/1.jpg"
       commentList: [],
       pageNum: 5, //评论数
