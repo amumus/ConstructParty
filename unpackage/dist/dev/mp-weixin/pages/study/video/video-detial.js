@@ -144,24 +144,61 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 {
   data: function data() {
     return {
       title: 'video',
       src: '',
-      danmuList: [{
-        text: '第 1s 出现的弹幕',
-        color: '#ff0000',
-        time: 1 },
-
-      {
-        text: '第 3s 出现的弹幕',
-        color: '#ff00ff',
-        time: 3 }],
-
-
-      danmuValue: '',
-      banner: {} };
+      // 				danmuList: [{
+      // 						text: '第 1s 出现的弹幕',
+      // 						color: '#ff0000',
+      // 						time: 1
+      // 					},
+      // 					{
+      // 						text: '第 3s 出现的弹幕',
+      // 						color: '#ff00ff',
+      // 						time: 3
+      // 					}
+      // 				],
+      // danmuValue: '',
+      banner: {},
+      type: 2, //video
+      defaultImgUrl: "../../../../static/img/headImage.png",
+      commentList: [],
+      pageNum: 5, //评论数
+      pageStart: 0, //评论页数
+      text: '', //评论内容
+      haveMoreComment: true };
 
   },
   onLoad: function onLoad(event) {
@@ -176,6 +213,7 @@ __webpack_require__.r(__webpack_exports__);
     uni.setNavigationBarTitle({
       title: this.banner.name });
 
+    this.getCommentList();
   },
   onReady: function onReady(res) {
 
@@ -207,6 +245,29 @@ __webpack_require__.r(__webpack_exports__);
     },
     getDetail: function getDetail() {
 
+    },
+    getCommentList: function getCommentList() {
+      var that = this;
+      var data = {
+        type: that.type,
+        targetId: that.banner.id,
+        pageNum: that.pageNum,
+        pageStart: that.pageStart };
+
+      uni.request({
+        url: this.websiteUrl + 'uniApp/comment/getCommentListByIdAndType',
+        data: data,
+        success: function success(result) {
+          that.commentList = result.data.data.list;
+        },
+        fail: function fail(data, code) {
+          uni.stopPullDownRefresh();
+          console.log('fail' + JSON.stringify(data));
+        } });
+
+    },
+    loadMoreComment: function loadMoreComment() {
+      this.haveMoreComment = false;
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
 
@@ -241,8 +302,10 @@ var render = function() {
   return _c(
     "view",
     [
-      _c("page-head", { attrs: { title: _vm.title, mpcomid: "6cc88b86-0" } }),
-      _c("view", { staticClass: "uni-padding-wrap uni-common-mt" }, [
+      _c("page-head", {
+        attrs: { title: _vm.banner.title, mpcomid: "6cc88b86-0" }
+      }),
+      _c("view", { staticClass: "uni-common-mt" }, [
         _c("view", [
           _c("video", {
             attrs: {
@@ -257,54 +320,7 @@ var render = function() {
             on: { error: _vm.videoErrorCallback }
           })
         ]),
-        _c("view", { staticClass: "uni-list uni-common-mt" }, [
-          _c("view", { staticClass: "uni-list-cell" }, [
-            _vm._m(0),
-            _c("view", { staticClass: "uni-list-cell-db" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.danmuValue,
-                    expression: "danmuValue"
-                  }
-                ],
-                staticClass: "uni-input",
-                attrs: {
-                  type: "text",
-                  placeholder: "在此处输入弹幕内容",
-                  eventid: "6cc88b86-1"
-                },
-                domProps: { value: _vm.danmuValue },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.danmuValue = $event.target.value
-                  }
-                }
-              })
-            ])
-          ])
-        ]),
-        _c(
-          "view",
-          { staticClass: "uni-btn-v" },
-          [
-            _c(
-              "button",
-              {
-                staticClass: "page-body-button",
-                attrs: { eventid: "6cc88b86-2" },
-                on: { click: _vm.sendDanmu }
-              },
-              [_vm._v("发送弹幕")]
-            )
-          ],
-          1
-        ),
+        _c("view", { staticClass: "contentTitle" }, [_vm._v("| 简介")]),
         _c(
           "view",
           { staticClass: "article-content" },
@@ -315,21 +331,54 @@ var render = function() {
           ],
           1
         )
-      ])
+      ]),
+      _c("view", { staticClass: "contentTitle" }, [_vm._v("| 观点")]),
+      _c("view", { staticClass: "uni-padding-wrap" }, [
+        _c(
+          "view",
+          { staticClass: "uni-comment" },
+          _vm._l(_vm.commentList, function(value, key) {
+            return _c("view", { key: key, staticClass: "uni-comment-list" }, [
+              _c("view", { staticClass: "uni-comment-face" }, [
+                value.userImage == null || value.userImage == ""
+                  ? _c("image", {
+                      attrs: { src: _vm.defaultImgUrl, mode: "widthFix" }
+                    })
+                  : _c("image", {
+                      attrs: { src: value.userImage, mode: "widthFix" }
+                    })
+              ]),
+              _c("view", { staticClass: "uni-comment-body" }, [
+                _c("view", { staticClass: "uni-comment-top" }, [
+                  _c("text", [_vm._v(_vm._s(value.userName))])
+                ]),
+                _c("view", { staticClass: "uni-comment-date" }, [
+                  _c("text", [_vm._v(_vm._s(value.publishDate))])
+                ]),
+                _c("view", { staticClass: "uni-comment-content" }, [
+                  _vm._v(_vm._s(value.commentContent))
+                ])
+              ])
+            ])
+          })
+        )
+      ]),
+      _vm.haveMoreComment
+        ? _c(
+            "view",
+            {
+              staticClass: "moreComment",
+              attrs: { eventid: "6cc88b86-1" },
+              on: { click: _vm.loadMoreComment }
+            },
+            [_vm._v("显示更多评论")]
+          )
+        : _c("view", { staticClass: "moreComment" }, [_vm._v("没有更多评论了")])
     ],
     1
   )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("view", [
-      _c("view", { staticClass: "uni-label" }, [_vm._v("弹幕内容")])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 

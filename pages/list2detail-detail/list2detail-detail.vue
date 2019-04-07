@@ -30,7 +30,7 @@
 				<view class="uni-comment-list" v-for="(value,key) in commentList" :key="key">
 						<view class="uni-comment-face">
 							<image
-								v-if="value.userImage == null || value.userImage == ''" src="../../static/img/logo.png"
+								v-if="value.userImage == null || value.userImage == ''" :src="defaultImgUrl"
 							  mode="widthFix">
 							</image>
 							<image v-else :src="value.userImage" mode="widthFix"></image>
@@ -48,7 +48,8 @@
 			</view>
 			<!-- 评论区 end -->
 		</view>
-		<view class="moreComment">显示更多评论</view>
+		<view class="moreComment" v-if="haveMoreComment">显示更多评论</view>
+		<view class="moreComment" v-else>没有更多评论了</view>
     </view>
 </template>
 
@@ -66,7 +67,8 @@
 				commentList:[],
 				pageNum:5,//评论数
 				pageStart:0,//评论页数
-				text:''//评论内容
+				text:'',//评论内容
+				haveMoreComment:true
             }
         },
         onLoad(event) {
@@ -79,7 +81,7 @@
             } catch (error) {
                 this.banner = JSON.parse(event.detailDate);
             }
-
+			console.log(this.banner)
             this.getDetail();
             uni.setNavigationBarTitle({
                 title: this.banner.title

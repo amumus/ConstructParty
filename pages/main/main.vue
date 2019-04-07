@@ -163,6 +163,7 @@
 					image: e.image,
 					id: e.id,
 					created: e.created,
+					publish_data:e.publish_data,
 					title: e.title
 				}
 				uni.navigateTo({

@@ -168,6 +168,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 {
   data: function data() {
     return {
@@ -181,8 +182,9 @@ __webpack_require__.r(__webpack_exports__);
       commentList: [],
       pageNum: 5, //评论数
       pageStart: 0, //评论页数
-      text: '' //评论内容
-    };
+      text: '', //评论内容
+      haveMoreComment: true };
+
   },
   onLoad: function onLoad(event) {
     uni.showLoading({
@@ -194,7 +196,7 @@ __webpack_require__.r(__webpack_exports__);
     } catch (error) {
       this.banner = JSON.parse(event.detailDate);
     }
-
+    console.log(this.banner);
     this.getDetail();
     uni.setNavigationBarTitle({
       title: this.banner.title });
@@ -456,10 +458,7 @@ var render = function() {
               _c("view", { staticClass: "uni-comment-face" }, [
                 value.userImage == null || value.userImage == ""
                   ? _c("image", {
-                      attrs: {
-                        src: "../../static/img/logo.png",
-                        mode: "widthFix"
-                      }
+                      attrs: { src: _vm.defaultImgUrl, mode: "widthFix" }
                     })
                   : _c("image", {
                       attrs: { src: value.userImage, mode: "widthFix" }
@@ -480,7 +479,9 @@ var render = function() {
           })
         )
       ]),
-      _c("view", { staticClass: "moreComment" }, [_vm._v("显示更多评论")])
+      _vm.haveMoreComment
+        ? _c("view", { staticClass: "moreComment" }, [_vm._v("显示更多评论")])
+        : _c("view", { staticClass: "moreComment" }, [_vm._v("没有更多评论了")])
     ],
     1
   )

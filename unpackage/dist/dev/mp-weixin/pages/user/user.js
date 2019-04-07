@@ -188,10 +188,10 @@ var _default =
       token: false, //是否登录
       userinfo: {
         nickName: '林木木',
-        userImage: '../../static/img/logo.png' },
+        userImage: '../../static/img/headImage.png' },
 
       name: "",
-      defaultUserImage: "../../static/img/logo.png" //默认头像路径
+      defaultUserImage: "../../static/img/headImage.png" //默认头像路径
     };
 
   },

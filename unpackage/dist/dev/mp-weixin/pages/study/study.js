@@ -434,22 +434,10 @@ var render = function() {
       _c("uni-grid", {
         attrs: {
           data: [
-            {
-              image: "https://img-cdn-qiniu.dcloud.net.cn/img/shu.png",
-              text: "视频学习"
-            },
-            {
-              image: "https://img-cdn-qiniu.dcloud.net.cn/img/laoren.png",
-              text: "学习积分"
-            },
-            {
-              image: "https://img-cdn-qiniu.dcloud.net.cn/img/liwu.png",
-              text: "学习报表"
-            },
-            {
-              image: "https://img-cdn-qiniu.dcloud.net.cn/img/maozi.png",
-              text: "我的评论"
-            }
+            { image: "../../static/img/video.png", text: "视频学习" },
+            { image: "../../static/img/score.png", text: "学习积分" },
+            { image: "../../static/img/report.png", text: "学习报表" },
+            { image: "../../static/img/comment.png", text: "我的评论" }
           ],
           "column-num": "3",
           eventid: "7e590bd3-0",
