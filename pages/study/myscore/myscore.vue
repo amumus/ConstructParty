@@ -3,7 +3,7 @@
 		<view style="background-image: url('https://construct-party-1256364044.cos.ap-guangzhou.myqcloud.com/score_bg.jpg');height: 300upx;width: 100%;">
 			<view style="height: 50upx;"></view>
 			<view style="font-size: 50upx ;color: #ff6699;margin-left:300upx;">总积分</view>
-			<text style="color: #997722;font-size: 90upx;margin-left:290upx;">500</text>
+			<text style="color: #997722;font-size: 90upx;margin-left:290upx;">{{score}}</text>
 		</view>
 		<view class="rank">我的排名:{{rank}}名</view>
 		<view>
@@ -29,8 +29,11 @@
 		data() {
 			return {
 				title: 'media-list',
-				showImg: false,
+				id:'',
 				rank:2,
+				score:0,
+				count:0,
+				
 				list: [{
 						remark: "登录积分+1",
 						time: "2019年3月22日 17：20",
@@ -50,9 +53,52 @@
 			}
 		},
 		onLoad() {
-			setTimeout(() => {
-				this.showImg = true;
-			}, 400)
+// 			setTimeout(() => {
+// 				this.showImg = true;
+// 			}, 400)
+			this.id = uni.getStorageSync( 'id');
+			this.getUserRank();
+			this.getUserScore();
+			this.getScoreDetial();
+		},
+		methods:{
+			getUserRank(){
+				let that = this;
+				uni.request({
+					url: this.websiteUrl+'uniApp/score/getUserRank',
+					data:{
+						userId:that.id
+					},
+					success:(data)=> {
+						that.rank = data.data.data;
+					}
+				})
+			},
+			getUserScore(){
+				let that = this;
+				uni.request({
+					url: this.websiteUrl+'uniApp/score/getUserScore',
+					data:{
+						userId:that.id
+					},
+					success:(data)=> {
+						that.score = data.data.data.score;
+					}
+				})
+			},
+			getScoreDetial(){
+				let that = this;
+				uni.request({
+					url: this.websiteUrl+'uniApp/score/getScoreDetial',
+					data:{
+						userId:that.id
+					},
+					success:(data)=> {
+						that.list = data.data.data.list;
+						that.count = data.data.data.count;
+					}
+				})
+			}
 		}
 	}
 </script>

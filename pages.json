@@ -76,7 +76,7 @@
 				"enablePullDownRefresh": true
 			}
 		},{
-				"path": "pages/study/comment/myComment",
+			"path": "pages/study/comment/myComment",
 			"style": {
 				"navigationBarTitleText": "我的评论"
 			}

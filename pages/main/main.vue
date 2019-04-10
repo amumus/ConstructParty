@@ -47,6 +47,8 @@
 	export default {
 		data() {
 			return {
+				userId:'',
+				scoreType:1,
 				//轮播图配置
 				title: 'swiper',
 				contentData:[],
@@ -92,6 +94,8 @@
 			// 列表
 			this.getSwiper();
 			this.getList(0);
+			this.userId = uni.getStorageSync( 'id');
+			this.addLogincore();
 		},
 		onPullDownRefresh() {
 			uni.showNavigationBarLoading();
@@ -121,6 +125,28 @@
 			},
 			goContentDetail(value){
 				console.log(value);
+			},
+			addLogincore(){
+				let that = this;
+				if(this.userId != ''){
+					uni.request({
+						url: this.websiteUrl+'uniApp/score/addUserScore',
+						data:{
+							userId:that.userId,
+							type:that.scoreType
+						},
+						success:(data)=> {
+							if(data.data.data.display = 1){
+								uni.showToast({
+									title: data.data.data.message,
+									duration: 2000
+								});
+							}
+							 ;
+						}
+					})
+				}
+				
 			},
 			//================列表 start =============
 			getList(type) {

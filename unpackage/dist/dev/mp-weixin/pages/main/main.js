@@ -162,6 +162,8 @@ var _vuex = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.j
 {
   data: function data() {
     return {
+      userId: '',
+      scoreType: 1,
       //轮播图配置
       title: 'swiper',
       contentData: [],
@@ -207,6 +209,8 @@ var _vuex = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.j
     // 列表
     this.getSwiper();
     this.getList(0);
+    this.userId = uni.getStorageSync('id');
+    this.addLogincore();
   },
   onPullDownRefresh: function onPullDownRefresh() {
     uni.showNavigationBarLoading();
@@ -236,6 +240,28 @@ var _vuex = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.j
     },
     goContentDetail: function goContentDetail(value) {
       console.log(value);
+    },
+    addLogincore: function addLogincore() {
+      var that = this;
+      if (this.userId != '') {
+        uni.request({
+          url: this.websiteUrl + 'uniApp/score/addUserScore',
+          data: {
+            userId: that.userId,
+            type: that.scoreType },
+
+          success: function success(data) {
+            if (data.data.data.display = 1) {
+              uni.showToast({
+                title: data.data.data.message,
+                duration: 2000 });
+
+            }
+            ;
+          } });
+
+      }
+
     },
     //================列表 start =============
     getList: function getList(type) {

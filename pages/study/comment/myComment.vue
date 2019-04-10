@@ -2,17 +2,19 @@
 	<view style="width: 100%;">
 		<view>
 			<view class="uni-list">
-				<view class="uni-list-cell" hover-class="uni-list-cell-hover">
+				<view>test</view>
+				<view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(value,key) in list" :key="key"  @click="bindClick(value)">
+					<view>test1</view>
 				<!-- <view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(value,key) in listData" :key="key" @click="goDetail(value)"> -->
 					<view class="uni-media-list">
-						<view class="uni-media-list-body" @click="bindClick">
-							<view class="uni-media-list-text-top">习近平抵达阿联酋阿布扎比，进领导层第一次会晤</view>
+						<view class="uni-media-list-body">
+							<view class="uni-media-list-text-top">{{value.targetTitle}}哇哇哇哇哇</view>
 							<view>
-								<text class="commentBody">你说得对</text>
+								<text class="commentBody">{{value.commentContent}}</text>
 							</view>
 							<view class="uni-media-list-text-bottom">
-								<text>你回复admin</text>
-								<text>2019-03-29 11:23:23</text>
+								<text>你回复</text>
+								<text>{{value.publishDate}}</text>
 							</view>
 						</view>
 					</view>
@@ -27,10 +29,36 @@
 <script>
 	
 	export default {
+		data() {
+			return {
+				id:0,
+				commentList:[],
+				count:0
+			}
+		},
+		onLoad() {
+			this.id = uni.getStorageSync( 'id');
+			this.getUserComment();
+		},
 		methods:{
 			bindClick(e){
 				uni.navigateTo({
 					url:"/pages/study/comment/commentDetail"
+				})
+			},
+			getUserComment(){
+				let that = this;
+				uni.request({
+					url: this.websiteUrl+'uniApp/comment/getMyCommentList',
+					data:{
+						userId:that.id
+					},
+					success:(data)=> {
+						// console.log(data)
+						that.list = data.data.data.list;
+						that.count = data.data.data.count;
+						console.log(that.list);
+					}
 				})
 			}
 		}
