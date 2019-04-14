@@ -155,11 +155,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _vuex = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");var dateUtils = __webpack_require__(/*! ../../common/util.js */ "../../../../HBuilderProjects/ConstructParty/ConstructParty/common/util.js").dateUtils;var _default =
 
 
 
-{
+
+
+
+
+var _mehaotianSearch = _interopRequireDefault(__webpack_require__(/*! @/components/mehaotian-search-revision/mehaotian-search.vue */ "../../../../HBuilderProjects/ConstructParty/ConstructParty/components/mehaotian-search-revision/mehaotian-search.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var dateUtils = __webpack_require__(/*! ../../common/util.js */ "../../../../HBuilderProjects/ConstructParty/ConstructParty/common/util.js").dateUtils; // 	import {
+// 		mapState
+// 	} from 'vuex'
+var _default = { components: {
+    mSearch: _mehaotianSearch.default },
+
   data: function data() {
     return {
       userId: '',
@@ -178,7 +186,7 @@ var _vuex = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.j
       reload: false };
 
   },
-  computed: (0, _vuex.mapState)(['forcedLogin', 'hasLogin', 'userName']),
+  // computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
   onLoad: function onLoad() {
     // 			if (!this.hasLogin) {
     // 				uni.showModal({
@@ -359,6 +367,20 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("view", { staticClass: "content" }, [
+    _c(
+      "view",
+      [
+        _c("m-search", {
+          attrs: {
+            mode: "2",
+            button: "inside",
+            show: "false",
+            mpcomid: "652cd3c2-0"
+          }
+        })
+      ],
+      1
+    ),
     _c("view", { staticClass: "uni-padding-wrap" }, [
       _c("view", { staticClass: "page-section swiper" }, [
         _c(
@@ -383,7 +405,7 @@ var render = function() {
                     key: key,
                     attrs: {
                       eventid: "652cd3c2-0-" + key,
-                      mpcomid: "652cd3c2-0-" + key
+                      mpcomid: "652cd3c2-1-" + key
                     },
                     on: {
                       click: function($event) {

@@ -27,6 +27,12 @@
 			</view>
 		</view>
 		
+		<view class="section">
+			<form @submit="send">
+				<textarea v-model="text" placeholder="期待你的神评论" />
+				<button form-type="submit">发表评论</button>
+			</form>
+		</view>
 		
 		<!--评论区 -->
 		<view class="contentTitle">| 观点</view>
@@ -153,7 +159,8 @@
 			},
 			loadMoreComment(){
 				this.haveMoreComment = false;
-			}
+			},
+			send(e) {}
 		}
 	}
 </script>
@@ -224,4 +231,30 @@
 		font-size: 30upx;
 		color: #666666;
 	}
+	
+	/* 发布评论 */
+	.section {
+		display: block;
+	}
+	.section form {
+		display: block;
+		padding: 20upx;
+	}
+	.section textarea {
+		background: #ffffff;
+		display: block;
+		margin: auto;
+		font-size: 25upx;
+		width: 98%;
+		height: 100upx;
+		padding: 10upx;
+	}
+	.section button {
+		display: block;
+		width: 250upx;
+		font-size: 30upx;
+		margin: 10upx 0 10upx auto;
+	}
+	
+	
 </style>

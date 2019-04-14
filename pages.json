@@ -85,6 +85,11 @@
 			"style": {
 				"navigationBarTitleText": "学习报表"
 			}
+		},{
+			"path":"pages/HM-search/HM-search",
+			"style":{
+				"navigationBarTitleText":"搜索"
+			}
 		}
 	],
 	"tabBar": {

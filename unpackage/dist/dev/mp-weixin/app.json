@@ -12,7 +12,8 @@
     "pages/study/video/video-detial",
     "pages/study/myscore/myscore",
     "pages/study/comment/myComment",
-    "pages/study/report/myScoreReport"
+    "pages/study/report/myScoreReport",
+    "pages/HM-search/HM-search"
   ],
   "subPackages": [],
   "window": {

@@ -63,3 +63,29 @@
 	color: #666666;
 }
 
+/* 发布评论 */
+.section {
+	display: block;
+}
+.section ._form {
+	display: block;
+	padding: 20rpx;
+}
+.section ._textarea {
+	background: #ffffff;
+	display: block;
+	margin: auto;
+	font-size: 25rpx;
+	width: 98%;
+	height: 100rpx;
+	padding: 10rpx;
+}
+.section ._button {
+	display: block;
+	width: 250rpx;
+	font-size: 30rpx;
+	margin: 10rpx 0 10rpx auto;
+}
+
+
+

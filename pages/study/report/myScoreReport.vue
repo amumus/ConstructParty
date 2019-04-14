@@ -29,7 +29,7 @@
 	import * as echarts from '@/components/echarts/echarts.simple.min.js';
 	import mpvueEcharts from '@/components/mpvue-echarts/src/echarts.vue';
 
-	const cityList = [{
+	let cityList = [{
 		value: 55,
 		name: '登录积分'
 	}, {
@@ -101,42 +101,33 @@
 		data() {
 			return {
 				echarts: echarts,
-				updateStatus: false
+				updateStatus: false,
+				id:'',
 			}
 		},
 		onLoad() {
+			this.id = uni.getStorageSync( 'id');
+			this.getData();
 			pieOption.series[0].data = cityList.slice(0);
+			lineOption.series.data = [0, 0, 0, 0, 0, 0, 0, 0, 200, 0, 0, 0]
 		},
 		methods: {
-// 			goBrowser() {
-// 				// #ifdef APP-PLUS
-// 				plus.runtime.openURL('https://github.com/F-loat/mpvue-echarts');
-// 				// #endif
-// 				// #ifdef MP-WEIXIN
-// 				uni.showModal({
-// 					content: '请复制链接在浏览器里打开',
-// 					showCancel: false
-// 				})
-// 				// #endif
-// 			},
-// 			updatePie() {
-// 				// 参考 mpvue-charts 的懒加载示例
-// 				// https://github.com/F-loat/mpvue-echarts/blob/master/examples/lazyLoad.vue
-// 
-// 				if (this.updateStatus) {
-// 					return;
-// 				}
-// 				pieOption.series[0].data.push({
-// 					value: 20,
-// 					name: '武汉'
-// 				});
-// 				pieOption.series[0].data.push({
-// 					value: 10,
-// 					name: '杭州'
-// 				});
-// 				this.$refs.pieChart.init();
-// 				this.updateStatus = true;
-// 			},
+			getData(){
+				let that = this;
+				uni.request({
+					url: this.websiteUrl+'uniApp/score/getUserScoreReport',
+					data: {
+						userId : that.id 
+					},
+					success: (result) => {
+						console.log(result.data);
+					},
+					fail: (data, code) => {
+						uni.stopPullDownRefresh();
+						console.log('fail' + JSON.stringify(data));
+					}
+				})
+			},
 			pieInit(canvas, width, height) {
 				let pieChart = echarts.init(canvas, null, {
 					width: width,

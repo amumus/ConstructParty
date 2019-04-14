@@ -174,6 +174,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
 {
   data: function data() {
     return {
@@ -268,7 +274,8 @@ __webpack_require__.r(__webpack_exports__);
     },
     loadMoreComment: function loadMoreComment() {
       this.haveMoreComment = false;
-    } } };exports.default = _default;
+    },
+    send: function send(e) {} } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
 
 /***/ }),
@@ -332,6 +339,43 @@ var render = function() {
           1
         )
       ]),
+      _c(
+        "view",
+        { staticClass: "section" },
+        [
+          _c(
+            "form",
+            { attrs: { eventid: "6cc88b86-2" }, on: { submit: _vm.send } },
+            [
+              _c("textarea", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.text,
+                    expression: "text"
+                  }
+                ],
+                attrs: { placeholder: "期待你的神评论", eventid: "6cc88b86-1" },
+                domProps: { value: _vm.text },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.text = $event.target.value
+                  }
+                }
+              }),
+              _c("button", { attrs: { "form-type": "submit" } }, [
+                _vm._v("发表评论")
+              ])
+            ],
+            1
+          )
+        ],
+        1
+      ),
       _c("view", { staticClass: "contentTitle" }, [_vm._v("| 观点")]),
       _c("view", { staticClass: "uni-padding-wrap" }, [
         _c(
@@ -368,7 +412,7 @@ var render = function() {
             "view",
             {
               staticClass: "moreComment",
-              attrs: { eventid: "6cc88b86-1" },
+              attrs: { eventid: "6cc88b86-3" },
               on: { click: _vm.loadMoreComment }
             },
             [_vm._v("显示更多评论")]

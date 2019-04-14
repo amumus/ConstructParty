@@ -1,28 +1,10 @@
 <template>
 	<view class="content">
-		<!-- 搜索 -->
-		<view>
-			<m-search mode="2" button="inside" show="false"></m-search>
+		<view class="search-box">
+			<!-- mSearch组件 如果使用原样式，删除组件元素-->
+			<mSearch :mode="2" button="outside" isMain="false"
+			:placeholder="defaultKeyword" @search="doSearch"  @confirm="doSearch" v-model="keyword"></mSearch>
 		</view>
-		<!-- 轮播图 -->
-		<view class="uni-padding-wrap">
-			<view class="page-section swiper">
-				<view class="page-section-spacing">
-					<swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
-						<swiper-item v-for="(value,key) in contentData" :key="key" @click="goContentDetail(value)">
-							<image :src="value.image" mode="scaleToFill" class="swiper-item"></image>
-							<text style="display: inline;">{{value.title}}</text>
-							<view style="float: right;">
-								<text>--</text>
-								<text style="color: #007aff;">{{value.id}}</text>
-								<text>--</text>
-							</view>
-						</swiper-item>
-					</swiper>
-				</view>
-			</view>
-		</view>
-		
 		<!-- 新闻列表 -->
 		<view class="uni-list">
 			<view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(value,key) in listData" :key="key" @click="goDetail(value)">
@@ -38,123 +20,42 @@
 				</view>
 			</view>
 		</view>
-
 	</view>
 </template>
 
 <script>
-	var dateUtils = require('../../common/util.js').dateUtils;
-// 	import {
-// 		mapState
-// 	} from 'vuex'
-	import mSearch from '@/components/mehaotian-search-revision/mehaotian-search.vue'
-
+	//引用mSearch组件，如不需要删除即可
+	import mSearch from '@/components/mehaotian-search-revision/mehaotian-search.vue';
 	export default {
-		components:{
-			mSearch
-		},
 		data() {
 			return {
-				userId:'',
-				scoreType:1,
-				//轮播图配置
-				title: 'swiper',
-				contentData:[],
-				indicatorDots: false,
-				autoplay: true,
-				interval: 2000,
-				duration: 500,
+				defaultKeyword: "",
+				keyword: "",
+				
 				// 列表
 				pageStart:0,
 				pageNum:10,
 				listData: [],
-				reload: false
+				scoreType:1,
 			}
 		},
-		// computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
 		onLoad() {
-			// 			if (!this.hasLogin) {
-			// 				uni.showModal({
-			// 					title: '未登录',
-			// 					content: '您未登录，需要登录后才能继续',
-			// 					/**
-			// 					 * 如果需要强制登录，不显示取消按钮
-			// 					 */
-			// 					showCancel: !this.forcedLogin,
-			// 					success: (res) => {
-			// 						if (res.confirm) {
-			// 							/**
-			// 							 * 如果需要强制登录，使用reLaunch方式
-			// 							 */
-			// 							if (this.forcedLogin) {
-			// 								uni.reLaunch({
-			// 									url: '../login/login'
-			// 								});
-			// 							} else {
-			// 								uni.navigateTo({
-			// 									url: '../login/login'
-			// 								});
-			// 							}
-			// 						}
-			// 					}
-			// 				});
-			// 			}
-			// 列表
-			this.getSwiper();
-			this.getList(0);
-			this.userId = uni.getStorageSync( 'id');
-			this.addLogincore();
+			this.loadDefaultKeyword();
 		},
-		onPullDownRefresh() {
-			uni.showNavigationBarLoading();
-			uni.showLoading({'title':"加载中..."});
-			this.pageStart = 0;
-			this.reload = true;
-			this.getList(0);
-			setTimeout(function() {
-				uni.hideNavigationBarLoading();
-				uni.stopPullDownRefresh();
-				uni.hideLoading();
-			}, 1000)
-		},
-		onReachBottom() {
-			this.getList(1);
+		components: {
+			//引用mSearch组件，如不需要删除即可
+			mSearch
 		},
 		methods: {
-			getSwiper(){
-				let that = this;
-				console.log(this.websiteUrl);
-				uni.request({
-					url: this.websiteUrl+'uniApp/content/listContent',
-					success:(data)=> {
-						that.contentData = data.data.data;
-					}
-				})
+			//加载默认搜索关键字
+			loadDefaultKeyword() {
+				//定义默认搜索关键字，可以自己实现ajax请求数据再赋值,用户未输入时，以水印方式显示在输入框，直接不输入内容搜索会搜索默认关键字
+				this.defaultKeyword = "默认关键字";
 			},
-			goContentDetail(value){
-				console.log(value);
-			},
-			addLogincore(){
-				let that = this;
-				if(this.userId != ''){
-					uni.request({
-						url: this.websiteUrl+'uniApp/score/addUserScore',
-						data:{
-							userId:that.userId,
-							type:that.scoreType
-						},
-						success:(data)=> {
-							if(data.data.data.display = 1){
-								uni.showToast({
-									title: data.data.data.message,
-									duration: 2000
-								});
-							}
-							 ;
-						}
-					})
-				}
-				
+			doSearch(e){
+				this.keyword = e;
+				console.log("点击搜索,keyword = "+this.keyword)
+				this.getList(0);
 			},
 			//================列表 start =============
 			getList(type) {
@@ -167,14 +68,15 @@
 				}
 				var data = {
 					pageStart:this.pageStart,
-					pageNum:this.pageNum
+					pageNum:this.pageNum,
+					keyword:this.keyword
 				};
 				
 				uni.request({
 					url: this.websiteUrl+'uniApp/news/getNewsList',
 					data: data,
 					success: (data) => {
- 						if( type == 1){
+						if( type == 1){
 							that.listData = that.listData.concat(data.data.data.data);
 						}else{//下拉刷新或第一次进入
 							that.listData = data.data.data.data;
@@ -217,91 +119,34 @@
 					});
 				});
 				return newItems;
-			}
+			},
+			//================列表 end ======================
 		}
-		//================列表 end ======================
+			
 		
 	}
 </script>
-
 <style>
-	.hello {
-		display: flex;
-		flex: 1;
-		flex-direction: column;
-	}
-
-	.title {
-		color: #8f8f94;
-		margin-top: 50px;
-	}
-
-	.ul {
-		font-size: 30px;
-		color: #8f8f94;
-		margin-top: 50px;
-	}
-
-	.ul>view {
-		line-height: 50px;
-	}
-
-	/* 	轮播图 */
-	.swiper {
-		height: 500upx;
-		
-	}
-/* background-color: rgba(0,0,0,0.1); */
-	.swiper-item {
-		display: block;
-		height: 400upx;
-		line-height: 400upx;
-		text-align: center;
-	}
-	.swiper-item text{
-		font-size: 25upx;
-	}
-
-	.swiper-list {
-		margin-top: 40upx;
-		margin-bottom: 0;
-	}
-
-	.uni-common-mt {
-		margin-top: 60upx;
-		position: relative;
-	}
-
-	.info {
-		position: absolute;
-		right: 20upx;
-	}
-		
-	/* 列表 */
-	.banner {
-		height: 360upx;
-		overflow: hidden;
-		position: relative;
-		background-color: #ccc;
-	}
-
-	.banner-img {
-		width: 100%;
-	}
-
-	.banner-title {
-		max-height: 84upx;
-		overflow: hidden;
-		position: absolute;
-		left: 30upx;
-		bottom: 30upx;
-		width: 90%;
-		font-size: 32upx;
-		font-weight: 400;
-		line-height: 42upx;
-		color: white;
-		z-index: 11;
-	}
+	.search-box {width:95%;background-color:rgb(242,242,242);padding:7.5px 2.5%;display:flex;justify-content:space-between;}
+	.search-box .input-box {width:85%;flex-shrink:1;display:flex;justify-content:center;align-items:center;}
+	.search-box .search-btn {width:15%;margin:0 0 0 2%;display:flex;justify-content:center;align-items:center;flex-shrink:0;font-size:14px;color:#fff;background:linear-gradient(to right,#ff9801,#ff570a);border-radius:30px;}
+	.search-box .input-box>input {width:100%;height:30px;font-size:16px;border:0;border-radius:30px;-webkit-appearance:none;-moz-appearance:none;appearance:none;padding:0 3%;margin:0;background-color:#ffffff;}
+	.placeholder-class {color:#9e9e9e;}
+	.search-keyword {width:100%;background-color:rgb(242,242,242);}
+	.keyword-list-box {height:calc(100vh - 55px);padding-top:5px;border-radius:10px 10px 0 0;background-color:#fff;}
+	.keyword-entry-tap {background-color:#eee;}
+	.keyword-entry {width:94%;height:40px;margin:0 3%;font-size:15px;color:#333;display:flex;justify-content:space-between;align-items:center;border-bottom:solid 1px #e7e7e7;}
+	.keyword-entry image {width:30px;height:30px;}
+	.keyword-entry .keyword-text,.keyword-entry .keyword-img {height:40px;display:flex;align-items:center;}
+	.keyword-entry .keyword-text {width:90%;}
+	.keyword-entry .keyword-img {width:10%;justify-content:center;}
+	.keyword-box {height:calc(100vh - 55px);border-radius:10px 10px 0 0;background-color:#fff;}
+	.keyword-box .keyword-block {padding:5px 0;}
+	.keyword-box .keyword-block .keyword-list-header {width:94%;padding:5px 3%;font-size:13.5px;color:#333;display:flex;justify-content:space-between;}
+	.keyword-box .keyword-block .keyword-list-header image {width:20px;height:20px;}
+	.keyword-box .keyword-block .keyword {width:94%;padding:3px 3%;display:flex;flex-flow:wrap;justify-content:flex-start;}
+	.keyword-box .keyword-block .hide-hot-tis {display:flex;justify-content:center;font-size:14px;color:#6b6b6b;}
+	.keyword-box .keyword-block .keyword>view {display:flex;justify-content:center;align-items:center;border-radius:30px;padding:0 10px;margin:5px 10px 5px 0;height:30px;font-size:14px;background-color:rgb(242,242,242);color:#6b6b6b;}
 
 	.uni-list {
 		background-color: #FFFFFF;
@@ -310,7 +155,7 @@
 		display: flex;
 		flex-direction: column;
 	}
-
+	
 	.uni-list:after {
 		position: absolute;
 		z-index: 10;
@@ -323,7 +168,7 @@
 		transform: scaleY(.5);
 		background-color: #c8c7cc;
 	}
-
+	
 	.uni-list::before {
 		position: absolute;
 		z-index: 10;
@@ -336,7 +181,7 @@
 		transform: scaleY(.5);
 		background-color: #c8c7cc;
 	}
-
+	
 	.uni-list-cell {
 		position: relative;
 		display: flex;
@@ -344,11 +189,11 @@
 		justify-content: space-between;
 		align-items: center;
 	}
-
+	
 	.uni-list-cell-hover {
 		background-color: #eee;
 	}
-
+	
 	.uni-list-cell::after {
 		position: absolute;
 		z-index: 3;
@@ -361,7 +206,7 @@
 		transform: scaleY(.5);
 		background-color: #c8c7cc;
 	}
-
+	
 	.uni-list .uni-list-cell:last-child::after {
 		height: 0upx;
 	}
@@ -373,39 +218,39 @@
 		width: 100%;
 		flex-direction: row;
 	}
-
+	
 	.uni-navigate-right.uni-media-list {
 		padding-right: 74upx;
 	}
-
+	
 	.uni-pull-right {
 		flex-direction: row-reverse;
 	}
-
+	
 	.uni-pull-right>.uni-media-list-logo {
 		margin-right: 0upx;
 		margin-left: 20upx;
 	}
-
+	
 	.uni-media-list-logo image {
 		height: 100%;
 		width: 100%;
 	}
-
-
+	
+	
 	.uni-media-list-text-bottom {
 		width: 100%;
 		line-height: 30upx;
 		font-size: 26upx;
 		color: #8f8f94;
 	}
-
+	
 	.uni-media-list-logo {
 		width: 180upx;
 		height: 140upx;
 		margin-right: 20upx;
 	}
-
+	
 	.uni-media-list-body {
 		display: flex;
 		flex: 1;
@@ -415,7 +260,7 @@
 		overflow: hidden;
 		height: auto;
 	}
-
+	
 	.uni-media-list-text-top {
 		width: 100%;
 		line-height: 36upx;
@@ -424,10 +269,11 @@
 		font-size: 28upx;
 		overflow: hidden;
 	}
-
+	
 	.uni-media-list-text-bottom {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
 	}
+
 </style>
