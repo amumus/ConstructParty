@@ -1,12 +1,10 @@
-export default [{
-							"post_id": '1',
-							"uid": 1,
+export default {
+							"id": '1',
+							"userId": 1,
 							"username": "龙葵",
-							"header_image": "/static/img/headImage.png",
-							"content": {
-								"text": "为总书记点赞",
-								"images": ["/static/index/test/test2.jpg"]
-							},
+							"headImg": "/static/img/headImage.png",
+							"content": "为总书记点赞"
+							,
 							"islike": 0,
 							"comments": {
 								"total": 2,
@@ -22,6 +20,6 @@ export default [{
 									}
 								]
 							},
-							"timestamp": "5分钟前"
+							"created": "5分钟前"
 						}
-					]
+					

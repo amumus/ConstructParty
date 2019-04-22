@@ -4,7 +4,7 @@
 		{
 			"path": "pages/main/main",
 			"style": {
-				"navigationBarTitleText": "登录模板",
+				"navigationBarTitleText": "首页",
 				"enablePullDownRefresh": true,
 				"app-plus": {
 					"titleNView": false,

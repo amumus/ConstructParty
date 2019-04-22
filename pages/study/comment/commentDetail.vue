@@ -1,36 +1,23 @@
 <template>
 	<view id="moments">
-		<view class="moments__post" v-for="(post,index) in posts" :key="index" :id="'post-'+index">
+		<view class="moments__post">
 			<view class="post-left">
-				<image class="post_header" :src="post.header_image"></image>
+				<image class="post_header" :src="post.headImg"></image>
 			</view>
 
 			<view class="post_right">
 				<text class="post-username">{{post.username}}</text>
-				<view id="paragraph" class="paragraph">{{post.content.text}}</view>
-				<!-- 相册 -->
-<!-- 				<view class="thumbnails">
-					<view :class="post.content.images.length === 1?'my-gallery':'thumbnail'" v-for="(image, index_images) in post.content.images" :key="index_images">
-						<image class="gallery_img" lazy-load mode="aspectFill" :src="image" :data-src="image" @tap="previewImage(post.content.images,index_images)"></image>
-					</view>
-				</view> -->
-				
+				<view id="paragraph" class="paragraph">{{post.content}}</view>
+
 				<!-- 资料条 -->
 				<view class="toolbar">
-					<view class="timestamp">{{post.timestamp}}</view>
-					<view class="like" @tap="like(index)">
-						<image :src="post.islike===0?'../../static/index/islike.png':'../../static/index/like.png'"></image>
-					</view>
-					<view class="comment" @tap="comment(index)">
-						<image src="../../static/index/comment.png"></image>
+					<view class="timestamp">{{post.created}}</view>
+					<view class="comment" @tap="comment(0)">
+						<image src="../../../static/index/comment.png"></image>
 					</view>
 				</view>
 				<!-- 赞／评论区 -->
 				<view class="post-footer">
-					<!-- <view class="footer_content">
-						<image class="liked" src="../../static/index/liked.png"></image>
-						<text class="nickname" v-for="(user,index_like) in post.like" :key="index_like">{{user.username}}</text>
-					</view> -->
 					<view class="uni-list">
 						<view class="uni-list-cell" hover-class="uni-list-cell-hover" @click="goDetail(value)">
 							<view class="uni-media-list">
@@ -65,7 +52,7 @@
 
 <script>
 	import chatInput from './chatinput.vue'; //input框
-	import postData from '../../../common/index.post.data.js';//朋友圈数据
+	// import postData from '../../../common/index.post.data.js';//朋友圈数据
 	
 	export default {
 		components: {
@@ -73,7 +60,9 @@
 		},
 		data() {
 			return {
-				posts: postData,//模拟数据
+				id:'',
+				post: '',//模拟数据
+						// posts: postData,//模拟数据
 				user_id: 4,
 				username: 'Liuxy',
 
@@ -93,16 +82,16 @@
 				showLoadMore: false,
 				
 				value:{
+					id:"",
 					title:"党的光辉哈哈哈哈哈哈哈",
 					author:"林木木",
 					publish_data:"2019-03-01 09:00:00",
 					image:"http://cpc.people.com.cn/NMediaFile/2017/1018/MAIN201710181326000338813134544.jpg"
-				}
-				
+				},
+				// inputValue:''
 			}
 		},
 		mounted() {
-			
 			uni.getStorage({
 				key: 'posts',
 				success: function (res) {
@@ -112,14 +101,16 @@
 			});
 
 		},
-		onLoad() {
+		onLoad(event) {		
+			this.id = event.id;
 			uni.getSystemInfo({ //获取设备信息
 				success: (res) => {
 					this.screenHeight = res.screenHeight;
 					this.platform = res.platform;
 				}
 			});
-			uni.startPullDownRefresh();
+			this.getCommontById();
+			
 		},
 		onShow() {
 			uni.onWindowResize((res) => { //监听窗口尺寸变化,窗口尺寸不包括底部导航栏
@@ -172,6 +163,42 @@
 			
 		},
 		methods: {
+			getCommontById(){
+				let that = this;
+				uni.request({
+				    url: this.websiteUrl+'uniApp/comment/getCommontById?id=' + this.id,
+				    success: (data) => {
+						data = data.data.data;
+						that.post = {
+							"id": that.id,
+							"userId": data.user.id,
+							"username": data.user.userName,
+							"headImg": data.user.headImg,
+							"content": data.comment.commentContent,
+							"islike": 0,
+							"comments": {
+								"total": 2,
+								"comment": [{
+										"uid": 2,
+										"username": '小爱',
+										"content": "加个微信吧!"
+									},
+									{
+										"uid": 3,
+										"username": '小虎',
+										"content": "一起出去好吗?"
+									}
+								]
+							},
+							"created": that.comment.created
+						}
+						
+				    },
+				    fail: () => {
+				        console.log('fail');
+				    }
+				})
+			},
 			test(){
 				this.navigateTo('../test/test');
 			},
@@ -196,6 +223,7 @@
 				}
 			},
 			comment(index) {
+				console.log(index)
 				this.showInput = true; //调起input框
 				this.focus = true;
 				this.index = index;
@@ -234,19 +262,28 @@
 				this.init_input();
 			},
 			send_comment: function(message) {
-
-				if (this.is_reply) {
-					var reply_username = this.posts[this.index].comments.comment[this.comment_index].username;
-					var comment_content = '回复' + reply_username + ':' + message.content;
-				} else {
-					var comment_content = message.content;
-				}
-				this.posts[this.index].comments.total += 1;
-				this.posts[this.index].comments.comment.push({
-					"uid": this.user_id,
-					"username": this.username,
-					"content": comment_content //直接获取input中的值
-				});
+// 				uni.request({
+// 					url: this.websiteUrl+'uniApp/score/getUserScore',
+// 					data:{
+// 						userId:that.id
+// 					},
+// 					success:(data)=> {
+// 						that.score = data.data.data.score;
+// 					}
+// 				})
+// 
+// 				if (this.is_reply) {
+// 					var reply_username = this.posts[this.index].comments.comment[this.comment_index].username;
+// 					var comment_content = '回复' + reply_username + ':' + message.content;
+// 				} else {
+// 					var comment_content = message.content;
+// 				}
+// 				this.posts[this.index].comments.total += 1;
+// 				this.posts[this.index].comments.comment.push({
+// 					"uid": this.user_id,
+// 					"username": this.username,
+// 					"content": comment_content //直接获取input中的值
+// 				});
 				this.init_input();
 			},
 			init_input() {
@@ -269,7 +306,8 @@
 					fail: () => {},
 					complete: () => {}
 				});
-			}
+			},
+			
 		}
 	}
 </script>

@@ -27,7 +27,7 @@
 		<view class="uni-padding-wrap">
 			<!-- 评论区 start -->
 			<view class="uni-comment">
-				<view class="uni-comment-list" v-for="(value,key) in commentList" :key="key">
+				<view class="uni-comment-list" v-for="(value,key) in commentList" :key="key" @click="goToCommentDetail(value)">
 						<view class="uni-comment-face">
 							<image
 								v-if="value.userImage == null || value.userImage == ''" :src="defaultImgUrl"
@@ -157,12 +157,7 @@
 					return false;
 				}
 				var self = this;
-// 				self.replylist.unshift({
-// 					text: this.text,
-// 					avatar: this.userinfo.avatarUrl,
-// 					nickName: this.userinfo.nickName,
-// 					pubtime: '刚刚'
-// 				});
+
 				var data = {
 					userId:self.id,
 					type:self.type,
@@ -188,46 +183,15 @@
 						}
 					}
 				})
-				
-// 				uni.request({
-// 					url: util.apiurl + 'syj/index/setpinglun',
-// 					method: 'POST',
-// 					data: {
-// 						text: self.text,
-// 						id: self.id,
-// 						token: self.token,
-// 						shebei: util.shebei
-// 					},
-// 					success: ret => {
-// 						if (ret.statusCode == 200 && ret.data.code < 1) {
-// 							self.text = '';
-// 							uni.showToast({
-// 								title: '审核后显示'
-// 							});
-// 							setTimeout(function() {
-// 								uni.hideLoading();
-// 							}, 1000);
-// 						} else {
-// 							uni.showToast({
-// 								title: ret.data.msg,
-// 								icon: 'none'
-// 							});
-// 							setTimeout(function() {
-// 								uni.hideLoading();
-// 							}, 1000);
-// 						}
-// 					},
-// 					fail: function() {
-// 						uni.hideLoading();
-// 					},
-// 					complete: function() {
-// 						this.loading = false;
-// 					},
-// 					header: {
-// 						auth: util.httpauth
-// 					}
-// 				});
 			},
+			goToCommentDetail(value){
+// 				let data = {
+// 					id:value.id
+// 				};
+				uni.navigateTo({
+					url: "../study/comment/commentDetail?id=" + value.id
+				})
+			}
         }
     }
 </script>

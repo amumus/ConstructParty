@@ -9,7 +9,7 @@
 		<view style="background-image: url('https://construct-party-1256364044.cos.ap-guangzhou.myqcloud.com/score_bg.jpg');height: 300upx;width: 100%;display: block;">
 			<view style="height: 50upx;"></view>
 			<view style="font-size: 50upx ;color: #ff6699;margin-left:300upx;">总积分</view>
-			<text style="color: #997722;font-size: 90upx;margin-left:290upx;">500</text>
+			<text style="color: #997722;font-size: 90upx;margin-left:290upx;">{{score}}</text>
 		</view>
 		<view class="canvasView">
 			<view class="canvas-bar">
@@ -28,7 +28,8 @@
 <script>
 	import * as echarts from '@/components/echarts/echarts.simple.min.js';
 	import mpvueEcharts from '@/components/mpvue-echarts/src/echarts.vue';
-
+	var pieChart = '';
+	var lineChart  = '';
 	let cityList = [{
 		value: 55,
 		name: '登录积分'
@@ -46,10 +47,10 @@
 		name: '视频数积分'
 	}];
 
-	let pieOption = {
+	var pieOption = {
 		animation: false,
 		backgroundColor: '#F8F8F8',
-		color: ['#37A2DA', '#32C5E9', '#67E0E3', '#91F2DE', '#FFDB5C', '#FF9F7F'],
+		color: ['#37A2DA', '#32C5E9', '#67E0E3', '#91F2DE', '#FFDB5C', '#FF9F7F','#1F5F7F'],
 		series: [{
 			label: {
 				normal: {
@@ -70,7 +71,7 @@
 		}]
 	};
 
-	let lineOption = {
+	var lineOption = {
 		animation: false,
 		color: ['#37A2DA'],
 		grid: {
@@ -103,24 +104,109 @@
 				echarts: echarts,
 				updateStatus: false,
 				id:'',
+				score:''
 			}
 		},
 		onLoad() {
 			this.id = uni.getStorageSync( 'id');
 			this.getData();
-			pieOption.series[0].data = cityList.slice(0);
-			lineOption.series.data = [0, 0, 0, 0, 0, 0, 0, 0, 200, 0, 0, 0]
+			this.getUserScore();
+
 		},
 		methods: {
-			getData(){
+			getUserScore(){
 				let that = this;
+				uni.request({
+					url: this.websiteUrl+'uniApp/score/getUserScore',
+					data:{
+						userId:that.id
+					},
+					success:(data)=> {
+						that.score = data.data.data.score;
+					}
+				})
+			},
+			getData(){
+				// 
+				let that = this;
+				pieOption.series[0].data.push({
+					
+					value: 40,
+					name: '111'
+					
+				})
 				uni.request({
 					url: this.websiteUrl+'uniApp/score/getUserScoreReport',
 					data: {
 						userId : that.id 
 					},
 					success: (result) => {
-						console.log(result.data);
+						console.log("type")
+						console.log(result.data.data.typeList);
+						console.log("monthList")
+						console.log(result.data.data.monthList);
+						//  
+						pieOption =  {
+							animation: false,
+							backgroundColor: '#F8F8F8',
+							color: ['#37A2DA', '#32C5E9', '#67E0E3', '#91F2DE', '#FFDB5C', '#FF9F7F','#1F5F7F'],
+							series: [{
+								label: {
+									normal: {
+										fontSize: 14
+									}
+								},
+								type: 'pie',
+								center: ['50%', '50%'],
+								radius: [0, '60%'],
+								data: [],
+								itemStyle: {
+									emphasis: {
+										shadowBlur: 10,
+										shadowOffsetX: 0,
+										shadowColor: 'rgba(0, 2, 2, 0.3)'
+									}
+								}
+							}]
+						};
+						pieOption.series[0].data = result.data.data.typeList.slice(0);
+						pieChart.setOption(pieOption);
+						
+						lineOption = {
+							animation: false,
+							color: ['#37A2DA'],
+							grid: {
+								x: 35,
+								x2: 10,
+								y: 30,
+								y2: 25
+							},
+							calculable: false,
+							xAxis: [{
+								type: 'category',
+								data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+							}],
+							yAxis: [{
+								type: 'value',
+								splitArea: {
+									show: true
+								}
+							}],
+							series: [{
+								name: '分数',
+								type: 'line',
+								data:result.data.data.monthList
+							}]
+						};
+						lineChart.setOption(lineOption);
+						
+// 						lineOption.series[0] =
+// 						[{
+// 							name: '分数',
+// 							type: 'line',
+// 							data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
+// 						}];
+// lineOption.series[0].data =[0, 0, 0, 0, 0, 0, 135.6, 162.2, 32.6, 0, 0, 0];
 					},
 					fail: (data, code) => {
 						uni.stopPullDownRefresh();
@@ -129,7 +215,7 @@
 				})
 			},
 			pieInit(canvas, width, height) {
-				let pieChart = echarts.init(canvas, null, {
+				pieChart = echarts.init(canvas, null, {
 					width: width,
 					height: height
 				})
@@ -139,12 +225,11 @@
 				return pieChart
 			},
 			lineInit(canvas, width, height) {
-				let lineChart = echarts.init(canvas, null, {
+				lineChart = echarts.init(canvas, null, {
 					width: width,
 					height: height
 				})
 				canvas.setChart(lineChart)
-
 				lineChart.setOption(lineOption)
 				return lineChart
 			}

@@ -272,12 +272,7 @@ __webpack_require__.r(__webpack_exports__);
         return false;
       }
       var self = this;
-      // 				self.replylist.unshift({
-      // 					text: this.text,
-      // 					avatar: this.userinfo.avatarUrl,
-      // 					nickName: this.userinfo.nickName,
-      // 					pubtime: '刚刚'
-      // 				});
+
       var data = {
         userId: self.id,
         type: self.type,
@@ -303,45 +298,14 @@ __webpack_require__.r(__webpack_exports__);
           }
         } });
 
+    },
+    goToCommentDetail: function goToCommentDetail(value) {
+      // 				let data = {
+      // 					id:value.id
+      // 				};
+      uni.navigateTo({
+        url: "../study/comment/commentDetail?id=" + value.id });
 
-      // 				uni.request({
-      // 					url: util.apiurl + 'syj/index/setpinglun',
-      // 					method: 'POST',
-      // 					data: {
-      // 						text: self.text,
-      // 						id: self.id,
-      // 						token: self.token,
-      // 						shebei: util.shebei
-      // 					},
-      // 					success: ret => {
-      // 						if (ret.statusCode == 200 && ret.data.code < 1) {
-      // 							self.text = '';
-      // 							uni.showToast({
-      // 								title: '审核后显示'
-      // 							});
-      // 							setTimeout(function() {
-      // 								uni.hideLoading();
-      // 							}, 1000);
-      // 						} else {
-      // 							uni.showToast({
-      // 								title: ret.data.msg,
-      // 								icon: 'none'
-      // 							});
-      // 							setTimeout(function() {
-      // 								uni.hideLoading();
-      // 							}, 1000);
-      // 						}
-      // 					},
-      // 					fail: function() {
-      // 						uni.hideLoading();
-      // 					},
-      // 					complete: function() {
-      // 						this.loading = false;
-      // 					},
-      // 					header: {
-      // 						auth: util.httpauth
-      // 					}
-      // 				});
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
 
@@ -454,28 +418,41 @@ var render = function() {
           "view",
           { staticClass: "uni-comment" },
           _vm._l(_vm.commentList, function(value, key) {
-            return _c("view", { key: key, staticClass: "uni-comment-list" }, [
-              _c("view", { staticClass: "uni-comment-face" }, [
-                value.userImage == null || value.userImage == ""
-                  ? _c("image", {
-                      attrs: { src: _vm.defaultImgUrl, mode: "widthFix" }
-                    })
-                  : _c("image", {
-                      attrs: { src: value.userImage, mode: "widthFix" }
-                    })
-              ]),
-              _c("view", { staticClass: "uni-comment-body" }, [
-                _c("view", { staticClass: "uni-comment-top" }, [
-                  _c("text", [_vm._v(_vm._s(value.userName))])
+            return _c(
+              "view",
+              {
+                key: key,
+                staticClass: "uni-comment-list",
+                attrs: { eventid: "650cc79f-2-" + key },
+                on: {
+                  click: function($event) {
+                    _vm.goToCommentDetail(value)
+                  }
+                }
+              },
+              [
+                _c("view", { staticClass: "uni-comment-face" }, [
+                  value.userImage == null || value.userImage == ""
+                    ? _c("image", {
+                        attrs: { src: _vm.defaultImgUrl, mode: "widthFix" }
+                      })
+                    : _c("image", {
+                        attrs: { src: value.userImage, mode: "widthFix" }
+                      })
                 ]),
-                _c("view", { staticClass: "uni-comment-date" }, [
-                  _c("text", [_vm._v(_vm._s(value.publishDate))])
-                ]),
-                _c("view", { staticClass: "uni-comment-content" }, [
-                  _vm._v(_vm._s(value.commentContent))
+                _c("view", { staticClass: "uni-comment-body" }, [
+                  _c("view", { staticClass: "uni-comment-top" }, [
+                    _c("text", [_vm._v(_vm._s(value.userName))])
+                  ]),
+                  _c("view", { staticClass: "uni-comment-date" }, [
+                    _c("text", [_vm._v(_vm._s(value.publishDate))])
+                  ]),
+                  _c("view", { staticClass: "uni-comment-content" }, [
+                    _vm._v(_vm._s(value.commentContent))
+                  ])
                 ])
-              ])
-            ])
+              ]
+            )
           })
         )
       ]),

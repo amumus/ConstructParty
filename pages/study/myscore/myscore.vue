@@ -34,21 +34,22 @@
 				score:0,
 				count:0,
 				
-				list: [{
-						remark: "登录积分+1",
-						time: "2019年3月22日 17：20",
-						integralScore:1
-					},
-					{
-						remark: "登录积分+1",
-						time: "2019年3月22日 17：20",
-						integralScore:1
-					},
-					{
-						remark: "登录积分+1",
-						time: "2019年3月22日 17：20",
-						integralScore:1
-					}
+				list: [
+// 					{
+// 						remark: "登录积分+1",
+// 						time: "2019年3月22日 17：20",
+// 						integralScore:1
+// 					},
+// 					{
+// 						remark: "登录积分+1",
+// 						time: "2019年3月22日 17：20",
+// 						integralScore:1
+// 					},
+// 					{
+// 						remark: "登录积分+1",
+// 						time: "2019年3月22日 17：20",
+// 						integralScore:1
+// 					}
 				]
 			}
 		},
