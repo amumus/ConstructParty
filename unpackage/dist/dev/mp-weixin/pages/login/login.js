@@ -353,6 +353,7 @@ var render = function() {
           "button",
           {
             staticClass: "primary",
+            staticStyle: { "background-color": "#CE3C39" },
             attrs: { type: "warn", eventid: "4c071713-2" },
             on: { tap: _vm.bindLogin }
           },

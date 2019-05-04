@@ -113,7 +113,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
 
 
 
@@ -180,9 +180,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var myTimeInterval = '';var _default =
 {
   data: function data() {
     return {
+      id: '', //用户id
       title: 'video',
       src: '',
       // 				danmuList: [{
@@ -208,23 +210,39 @@ __webpack_require__.r(__webpack_exports__);
 
   },
   onLoad: function onLoad(event) {
+    var that = this;
     // 目前在某些平台参数会被主动 decode，暂时这样处理。
     try {
       this.banner = JSON.parse(decodeURIComponent(event.detailDate));
     } catch (error) {
       this.banner = JSON.parse(event.detailDate);
     }
+    this.banner.content = this.banner.content.replace(/\\/g, "").replace(/<img/g,
+    "<img style=\"width:100%;\"");
     // console.log(this.banner)
     this.getDetail();
     uni.setNavigationBarTitle({
       title: this.banner.name });
 
     this.getCommentList();
+    myTimeInterval = setInterval(function () {
+      if (this.id != '') {
+        uni.request({
+          url: that.websiteUrl + 'uniApp/score/addUserScore?userId=' + that.id + '&type=3' });
+
+        console.log('两分钟+2分');
+      }
+      console.log('定时器');
+    }, 120000); //每两分钟执行一次，
   },
   onReady: function onReady(res) {
 
     this.videoContext = uni.createVideoContext('myVideo');
 
+  },
+  onUnload: function onUnload() {
+    console.log('页面关闭');
+    clearInterval(myTimeInterval);
   },
   methods: {
     sendDanmu: function sendDanmu() {
@@ -250,7 +268,28 @@ __webpack_require__.r(__webpack_exports__);
       return '#' + rgb.join('');
     },
     getDetail: function getDetail() {
+      //发送加分请求
+      var that = this;
+      this.id = uni.getStorageSync('id');
+      console.log("Id = " + this.id);
+      if (this.id != '') {
+        uni.request({
+          url: this.websiteUrl + 'uniApp/score/addUserScore',
+          data: {
+            userId: that.id,
+            type: 5 },
 
+          success: function success(result) {
+            if (result.data.data.display != 0) {
+              uni.showToast({
+                icon: 'none',
+                title: result.data.data.message,
+                duration: 2000 });
+
+            }
+          } });
+
+      }
     },
     getCommentList: function getCommentList() {
       var that = this;
@@ -275,7 +314,71 @@ __webpack_require__.r(__webpack_exports__);
     loadMoreComment: function loadMoreComment() {
       this.haveMoreComment = false;
     },
-    send: function send(e) {} } };exports.default = _default;
+    checklogin: function checklogin() {
+      this.id = uni.getStorageSync('id');
+      if (this.id == null || this.id == '') {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    send: function send(e) {
+      if (!this.checklogin()) {
+        uni.showModal({
+          content: '请登录后再操作',
+          confirmText: '马上登录',
+          success: function success(res) {
+            if (res.confirm) {
+              uni.navigateTo({
+                url: '../../login/login' });
+
+            } else if (res.cancel) {
+
+            }
+          } });
+
+        return false;
+      }
+      if (!this.text) {
+        uni.showToast({
+          title: '请输入评论内容',
+          icon: 'none' });
+
+        return false;
+      }
+      var self = this;
+
+      var data = {
+        userId: self.id,
+        type: self.type,
+        targetId: self.banner.id,
+        parentId: 0,
+        rootId: 0,
+        parentUserId: 0,
+        commentContent: self.text };
+
+
+      uni.request({
+        url: this.websiteUrl + 'uniApp/comment/addComment',
+        data: data,
+        success: function success(result) {
+          //评论成功，才重新请求comment列表
+          if (result.data.status == 1) {
+            self.getCommentList();
+          } else {
+            uni.showToast({
+              title: result.data.message,
+              duration: 2000 });
+
+          }
+        } });
+
+    },
+    goToCommentDetail: function goToCommentDetail(value) {
+      uni.navigateTo({
+        url: "../comment/commentDetail?id=" + value.id + "&type=2" });
+
+    } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
 
 /***/ }),
@@ -382,28 +485,41 @@ var render = function() {
           "view",
           { staticClass: "uni-comment" },
           _vm._l(_vm.commentList, function(value, key) {
-            return _c("view", { key: key, staticClass: "uni-comment-list" }, [
-              _c("view", { staticClass: "uni-comment-face" }, [
-                value.userImage == null || value.userImage == ""
-                  ? _c("image", {
-                      attrs: { src: _vm.defaultImgUrl, mode: "widthFix" }
-                    })
-                  : _c("image", {
-                      attrs: { src: value.userImage, mode: "widthFix" }
-                    })
-              ]),
-              _c("view", { staticClass: "uni-comment-body" }, [
-                _c("view", { staticClass: "uni-comment-top" }, [
-                  _c("text", [_vm._v(_vm._s(value.userName))])
+            return _c(
+              "view",
+              {
+                key: key,
+                staticClass: "uni-comment-list",
+                attrs: { eventid: "6cc88b86-3-" + key },
+                on: {
+                  click: function($event) {
+                    _vm.goToCommentDetail(value)
+                  }
+                }
+              },
+              [
+                _c("view", { staticClass: "uni-comment-face" }, [
+                  value.userImage == null || value.userImage == ""
+                    ? _c("image", {
+                        attrs: { src: _vm.defaultImgUrl, mode: "widthFix" }
+                      })
+                    : _c("image", {
+                        attrs: { src: value.userImage, mode: "widthFix" }
+                      })
                 ]),
-                _c("view", { staticClass: "uni-comment-date" }, [
-                  _c("text", [_vm._v(_vm._s(value.publishDate))])
-                ]),
-                _c("view", { staticClass: "uni-comment-content" }, [
-                  _vm._v(_vm._s(value.commentContent))
+                _c("view", { staticClass: "uni-comment-body" }, [
+                  _c("view", { staticClass: "uni-comment-top" }, [
+                    _c("text", [_vm._v(_vm._s(value.userName))])
+                  ]),
+                  _c("view", { staticClass: "uni-comment-date" }, [
+                    _c("text", [_vm._v(_vm._s(value.publishDate))])
+                  ]),
+                  _c("view", { staticClass: "uni-comment-content" }, [
+                    _vm._v(_vm._s(value.commentContent))
+                  ])
                 ])
-              ])
-            ])
+              ]
+            )
           })
         )
       ]),
@@ -412,7 +528,7 @@ var render = function() {
             "view",
             {
               staticClass: "moreComment",
-              attrs: { eventid: "6cc88b86-3" },
+              attrs: { eventid: "6cc88b86-4" },
               on: { click: _vm.loadMoreComment }
             },
             [_vm._v("显示更多评论")]

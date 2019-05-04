@@ -39,7 +39,7 @@
 		<view class="uni-padding-wrap">
 			<!-- 评论区 start -->
 			<view class="uni-comment">
-				<view class="uni-comment-list" v-for="(value,key) in commentList" :key="key">
+				<view class="uni-comment-list" v-for="(value,key) in commentList" :key="key" @click="goToCommentDetail(value)">
 						<view class="uni-comment-face">
 							<image
 								v-if="value.userImage == null || value.userImage == ''" :src="defaultImgUrl"
@@ -65,9 +65,11 @@
 	</view>
 </template>
 <script>
+	var myTimeInterval = '';
 	export default {
 		data() {
 			return {
+				id:'',//用户id
 				title: 'video',
 				src: '',
 // 				danmuList: [{
@@ -93,23 +95,39 @@
 			}
 		},
 		onLoad(event) {
+			let that = this;
 			 // 目前在某些平台参数会被主动 decode，暂时这样处理。
 			try {
 			    this.banner = JSON.parse(decodeURIComponent(event.detailDate));
 			} catch (error) {
 			    this.banner = JSON.parse(event.detailDate);
 			}
+			this.banner.content =this.banner.content.replace(/\\/g, "").replace(/<img/g,
+			"<img style=\"width:100%;\"");
 			// console.log(this.banner)
 			 this.getDetail();
 			uni.setNavigationBarTitle({
 			    title: this.banner.name
 			});
 			this.getCommentList();
+			myTimeInterval = setInterval(function(){
+				if(this.id != ''){
+					uni.request({
+					    url: that.websiteUrl+'uniApp/score/addUserScore?userId=' + that.id+'&type=3'
+					})
+					console.log('两分钟+2分');
+				}
+				console.log('定时器')
+			},120000)//每两分钟执行一次，
 		},
 		onReady: function(res) {
 			// #ifndef MP-ALIPAY
 			this.videoContext = uni.createVideoContext('myVideo')
 			// #endif
+		},
+		onUnload (){
+				  console.log('页面关闭')
+				  clearInterval(myTimeInterval);
 		},
 		methods: {
 			sendDanmu: function() {
@@ -135,7 +153,28 @@
 				return '#' + rgb.join('')
 			},
 			getDetail : function(){
-				
+				//发送加分请求
+				let that = this;
+				this.id = uni.getStorageSync('id');
+				console.log("Id = " + this.id)
+				if(this.id != ''){
+					uni.request({
+						url: this.websiteUrl+'uniApp/score/addUserScore',
+						data:{
+							 userId:that.id,
+							 type:5
+						},
+						success:(result)=>{
+							if(result.data.data.display != 0){
+								uni.showToast({
+									icon:'none',
+									title: result.data.data.message,
+									duration: 2000
+								});
+							}
+						}
+					})
+				}
 			},
 			getCommentList(){
 				let that = this;
@@ -160,7 +199,71 @@
 			loadMoreComment(){
 				this.haveMoreComment = false;
 			},
-			send(e) {}
+			checklogin(){
+				this.id = uni.getStorageSync('id');
+				if(this.id == null || this.id == ''){
+					return false;
+				}else{
+					return true;
+				}
+			},
+			send(e) {
+				if (!this.checklogin()) {
+					uni.showModal({
+						content: '请登录后再操作',
+						confirmText:'马上登录',
+						success: function (res) {
+							if (res.confirm) {
+								uni.navigateTo({
+								    url: '../../login/login',
+								});
+							} else if (res.cancel) {
+								
+							}
+						}
+					});
+					return false;
+				}
+				if (!this.text) {
+					uni.showToast({
+						title: '请输入评论内容',
+						icon: 'none'
+					});
+					return false;
+				}
+				var self = this;
+				
+				var data = {
+					userId:self.id,
+					type:self.type,
+					targetId:self.banner.id,
+					parentId:0,
+					rootId:0,
+					parentUserId:0,
+					commentContent:self.text
+				};
+				
+				uni.request({
+					url:this.websiteUrl+'uniApp/comment/addComment',
+					data: data,
+					success: (result) => {
+						//评论成功，才重新请求comment列表
+						if(result.data.status == 1){
+							self.getCommentList();
+						}else{
+							uni.showToast({
+								 title:  result.data.message,
+								duration: 2000
+							});
+						}
+					}
+				})
+			},
+			goToCommentDetail(value){
+				uni.navigateTo({
+					url: "../comment/commentDetail?id=" + value.id+"&type=2"
+				})
+			}
 		}
 	}
 </script>

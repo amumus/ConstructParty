@@ -14,7 +14,7 @@
             </view>
         </view>
         <view class="btn-row">
-            <button type="warn" class="primary" @tap="bindLogin">登录</button>
+            <button type="warn" class="primary" @tap="bindLogin" style="background-color:#CE3C39;">登录</button>
         </view>
         <view class="action-row">
             <navigator url="../reg/reg">注册账号</navigator>
@@ -184,6 +184,6 @@
     }
 	
 	.primary{
-		background-color:#d81e06;
+		background-color:#CE3C39;
 	}
 </style>

@@ -54,6 +54,7 @@
 </template>
 
 <script>
+	var myTimeInterval = '';
     export default {
         data() {
             return {
@@ -68,10 +69,11 @@
 				pageNum:5,//评论数
 				pageStart:0,//评论页数
 				text:'',//评论内容
-				haveMoreComment:true
+				haveMoreComment:true,
             }
         },
         onLoad(event) {
+			let that = this;
 			uni.showLoading({
 				title: '加载中'
 			});
@@ -87,7 +89,21 @@
                 title: this.banner.title
             });
 			this.getCommentList();
+			myTimeInterval = setInterval(function(){
+				if(this.id != ''){
+					uni.request({
+					    url: that.websiteUrl+'uniApp/score/addUserScore?userId=' + that.id+'&type=2'
+					})
+					console.log('两分钟+2分');
+				}
+				console.log('定时器')
+			},120000)//每两分钟执行一次，
+			
         },
+	  onUnload (){
+		  console.log('页面关闭')
+		  clearInterval(myTimeInterval);
+	  },
         methods: {
             getDetail() {
                 uni.request({
@@ -123,6 +139,27 @@
 						console.log('fail' + JSON.stringify(data));
 					}
 				})
+				//发送加分请求
+				this.id = uni.getStorageSync('id');
+				if(this.id != ''){
+					uni.request({
+						url: this.websiteUrl+'uniApp/score/addUserScore',
+						data:{
+							 userId:that.id,
+							 type:4
+						},
+						success:(result)=>{
+							if(result.data.data.display != 0){
+								uni.showToast({
+									icon:'none',
+									title: result.data.data.message,
+									duration: 2000
+								});
+							}
+						}
+					})
+				}
+				
 			},
 			checklogin(){
 				this.id = uni.getStorageSync('id');
@@ -189,7 +226,7 @@
 // 					id:value.id
 // 				};
 				uni.navigateTo({
-					url: "../study/comment/commentDetail?id=" + value.id
+					url: "../study/comment/commentDetail?id=" + value.id+"&type=1"
 				})
 			}
         }

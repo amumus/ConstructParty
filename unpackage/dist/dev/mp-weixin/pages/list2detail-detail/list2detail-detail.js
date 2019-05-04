@@ -113,7 +113,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
 
 
 
@@ -169,6 +169,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var myTimeInterval = '';var _default =
 {
   data: function data() {
     return {
@@ -187,6 +188,7 @@ __webpack_require__.r(__webpack_exports__);
 
   },
   onLoad: function onLoad(event) {
+    var that = this;
     uni.showLoading({
       title: '加载中' });
 
@@ -202,6 +204,20 @@ __webpack_require__.r(__webpack_exports__);
       title: this.banner.title });
 
     this.getCommentList();
+    myTimeInterval = setInterval(function () {
+      if (this.id != '') {
+        uni.request({
+          url: that.websiteUrl + 'uniApp/score/addUserScore?userId=' + that.id + '&type=2' });
+
+        console.log('两分钟+2分');
+      }
+      console.log('定时器');
+    }, 120000); //每两分钟执行一次，
+
+  },
+  onUnload: function onUnload() {
+    console.log('页面关闭');
+    clearInterval(myTimeInterval);
   },
   methods: {
     getDetail: function getDetail() {var _this = this;
@@ -237,6 +253,27 @@ __webpack_require__.r(__webpack_exports__);
           uni.stopPullDownRefresh();
           console.log('fail' + JSON.stringify(data));
         } });
+
+      //发送加分请求
+      this.id = uni.getStorageSync('id');
+      if (this.id != '') {
+        uni.request({
+          url: this.websiteUrl + 'uniApp/score/addUserScore',
+          data: {
+            userId: that.id,
+            type: 4 },
+
+          success: function success(result) {
+            if (result.data.data.display != 0) {
+              uni.showToast({
+                icon: 'none',
+                title: result.data.data.message,
+                duration: 2000 });
+
+            }
+          } });
+
+      }
 
     },
     checklogin: function checklogin() {
@@ -304,7 +341,7 @@ __webpack_require__.r(__webpack_exports__);
       // 					id:value.id
       // 				};
       uni.navigateTo({
-        url: "../study/comment/commentDetail?id=" + value.id });
+        url: "../study/comment/commentDetail?id=" + value.id + "&type=1" });
 
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))

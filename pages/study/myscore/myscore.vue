@@ -16,7 +16,7 @@
 				<view class="uni-media-list" style="width: 100%;">
 					<view class="uni-media-list-body" style="padding-left: 30upx;padding-top: 12upx;padding-bottom: 12upx;">
 						<view class="uni-media-list-text-top">{{value.remark}}<text style="float: right;color: #007AFF;padding-right: 60upx;">+{{value.integralScore}}</text></view>
-						<view class="uni-media-list-text-bottom uni-ellipsis">{{value.time}}</view>
+						<view class="uni-media-list-text-bottom uni-ellipsis">{{value.occurTime}}</view>
 					</view>
 				</view>
 			</view>

@@ -144,7 +144,7 @@
 							type:that.scoreType
 						},
 						success:(data)=> {
-							if(data.data.data.display = 1){
+							if(data.data.data.display == 1){
 								uni.showToast({
 									title: data.data.data.message,
 									duration: 2000

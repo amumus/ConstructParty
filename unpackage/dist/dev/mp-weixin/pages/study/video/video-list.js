@@ -560,10 +560,13 @@ var _util = __webpack_require__(/*! @/common/util.js */ "../../../../HBuilderPro
       console.log("===" + this.pageStart + "===");
       var data = {
         pageStart: this.pageStart,
-        pageNum: this.pageNum };
+        pageNum: this.pageNum,
+        videoType: '' };
 
       if (this.tabIndex != 0) {
-        data.video_type = this.tabIndex;
+        data.videoType = this.tabIndex;
+      } else {
+        data.videoType = '';
       }
       uni.request({
         url: this.websiteUrl + 'uniApp/video/listVideo',
@@ -643,7 +646,7 @@ var _util = __webpack_require__(/*! @/common/util.js */ "../../../../HBuilderPro
         }).exec();
       });
     },
-    tapTab: function () {var _tapTab = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2(index) {var tabBar, tabBarScrollLeft, activeTab;return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0: //点击tab-bar
+    tapTab: function () {var _tapTab = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2(index) {var tabBar, tabBarScrollLeft;return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0: //点击tab-bar
                 console.log(index);if (!(
                 this.tabIndex === index)) {_context2.next = 5;break;}return _context2.abrupt("return",
                 false);case 5:_context2.next = 7;return (
@@ -654,10 +657,11 @@ var _util = __webpack_require__(/*! @/common/util.js */ "../../../../HBuilderPro
                 this.isClickChange = true;
                 this.tabIndex = index;
                 // 首次切换后加载数据
-                activeTab = this.videoList[this.tabIndex];
-                if (activeTab.data.length === 0) {
-                  this.getList(0);
-                }case 14:case "end":return _context2.stop();}}}, _callee2, this);}));function tapTab(_x2) {return _tapTab.apply(this, arguments);}return tapTab;}() } };exports.default = _default;
+                // 					const activeTab = this.videoList[this.tabIndex];
+                // 					if (activeTab.data.length === 0) {
+                this.getList(0);
+                // 					}
+              case 13:case "end":return _context2.stop();}}}, _callee2, this);}));function tapTab(_x2) {return _tapTab.apply(this, arguments);}return tapTab;}() } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
 
 /***/ }),

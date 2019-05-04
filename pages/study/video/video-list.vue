@@ -117,10 +117,13 @@
 				console.log("==="+this.pageStart+"===")
 				var data = {
 					pageStart:this.pageStart,
-					pageNum:this.pageNum
+					pageNum:this.pageNum,
+					videoType:''
 				};
 				if(this.tabIndex != 0){
-					data.video_type = this.tabIndex;
+					data.videoType = this.tabIndex;
+				}else{
+					data.videoType='';
 				}
 				uni.request({
 					url: this.websiteUrl+'uniApp/video/listVideo',
@@ -211,10 +214,11 @@
 					this.isClickChange = true;
 					this.tabIndex = index;
 					// 首次切换后加载数据
-					const activeTab = this.videoList[this.tabIndex];
-					if (activeTab.data.length === 0) {
+// 					const activeTab = this.videoList[this.tabIndex];
+// 					if (activeTab.data.length === 0) {
 						this.getList(0);
-					}
+// 					}
+					
 				}
 			},
 		}

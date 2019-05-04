@@ -2,13 +2,11 @@
 	<view style="width: 100%;">
 		<view>
 			<view class="uni-list">
-				<view>test</view>
-				<view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(value,key) in list" :key="key"  @click="bindClick(value)">
-					<view>test1</view>
+				<view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(value,key) in commentList" :key="key"  @click="bindClick(value)">
 				<!-- <view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(value,key) in listData" :key="key" @click="goDetail(value)"> -->
 					<view class="uni-media-list">
 						<view class="uni-media-list-body">
-							<view class="uni-media-list-text-top">{{value.targetTitle}}哇哇哇哇哇</view>
+							<view class="uni-media-list-text-top">{{value.targetTitle}}</view>
 							<view>
 								<text class="commentBody">{{value.commentContent}}</text>
 							</view>
@@ -43,7 +41,7 @@
 		methods:{
 			bindClick(e){
 				uni.navigateTo({
-					url:"/pages/study/comment/commentDetail"
+					url:"/pages/study/comment/commentDetail?id="+e.id
 				})
 			},
 			getUserComment(){
@@ -55,9 +53,9 @@
 					},
 					success:(data)=> {
 						// console.log(data)
-						that.list = data.data.data.list;
+						that.commentList = data.data.data.list;
 						that.count = data.data.data.count;
-						console.log(that.list);
+						console.log(that.commentList);
 					}
 				})
 			}

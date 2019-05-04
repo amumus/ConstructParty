@@ -26,7 +26,7 @@
 									<view class="uni-media-list-text-top">{{value.title}}</view>
 									<view class="uni-media-list-text-bottom">
 										<text>{{value.author}}</text>
-										<text>{{value.publish_data}}</text>
+										<text>{{value.created}}</text>
 									</view>
 								</view>
 							</view>
@@ -34,7 +34,7 @@
 					</view>
 					
 					<view class="footer_content" v-for="(comment,comment_index) in post.comments.comment" :key="comment_index" @tap="reply(index,comment_index)">
-						<text class="comment-nickname">{{comment.username}}: <text class="comment-content">{{comment.content}}</text></text>
+						<text class="comment-nickname">{{comment.userName}}: <text class="comment-content">{{comment.commentContent}}</text></text>
 					</view>
 				</view>
 			</view>
@@ -60,12 +60,14 @@
 		},
 		data() {
 			return {
-				id:'',
+				id:'',//评论id
+				targetId:'',
+				type:2,
 				post: '',//模拟数据
 						// posts: postData,//模拟数据
-				user_id: 4,
+				userId: '',
 				username: 'Liuxy',
-
+				parentUserId:'',//根评论id
 				index: '',
 				comment_index: '',
 
@@ -83,10 +85,10 @@
 				
 				value:{
 					id:"",
-					title:"党的光辉哈哈哈哈哈哈哈",
-					author:"林木木",
-					publish_data:"2019-03-01 09:00:00",
-					image:"http://cpc.people.com.cn/NMediaFile/2017/1018/MAIN201710181326000338813134544.jpg"
+					title:"",
+					author:"",
+					created:"",
+					image:""
 				},
 				// inputValue:''
 			}
@@ -103,6 +105,8 @@
 		},
 		onLoad(event) {		
 			this.id = event.id;
+			this.userId = uni.getStorageSync( 'id');
+			
 			uni.getSystemInfo({ //获取设备信息
 				success: (res) => {
 					this.screenHeight = res.screenHeight;
@@ -169,6 +173,15 @@
 				    url: this.websiteUrl+'uniApp/comment/getCommontById?id=' + this.id,
 				    success: (data) => {
 						data = data.data.data;
+						that.value = data.contentMap;
+						if(that.value.name != null){
+							that.value.title = that.value.name;
+							that.value.image = that .value.img;
+						}
+						that.type = data.comment.type;
+						that.targetId = data.contentMap.id;
+						that.parentUserId = data.comment.userId;
+						
 						that.post = {
 							"id": that.id,
 							"userId": data.user.id,
@@ -178,19 +191,9 @@
 							"islike": 0,
 							"comments": {
 								"total": 2,
-								"comment": [{
-										"uid": 2,
-										"username": '小爱',
-										"content": "加个微信吧!"
-									},
-									{
-										"uid": 3,
-										"username": '小虎',
-										"content": "一起出去好吗?"
-									}
-								]
+								"comment":data.list,
 							},
-							"created": that.comment.created
+							"created": data.comment.created
 						}
 						
 				    },
@@ -206,21 +209,6 @@
 				uni.navigateTo({
 					url: url
 				});
-			},
-			like(index) {
-				if (this.posts[index].islike === 0) {
-					this.posts[index].islike = 1;
-					this.posts[index].like.push({
-						"uid": this.user_id,
-						"username": "," + this.username
-					});
-				} else {
-					this.posts[index].islike = 0;
-					this.posts[index].like.splice(this.posts[index].like.indexOf({
-						"uid": this.user_id,
-						"username": "," + this.username
-					}), 1);
-				}
 			},
 			comment(index) {
 				console.log(index)
@@ -261,29 +249,30 @@
 			blur: function() {
 				this.init_input();
 			},
+			//发送评论
 			send_comment: function(message) {
-// 				uni.request({
-// 					url: this.websiteUrl+'uniApp/score/getUserScore',
-// 					data:{
-// 						userId:that.id
-// 					},
-// 					success:(data)=> {
-// 						that.score = data.data.data.score;
-// 					}
-// 				})
-// 
-// 				if (this.is_reply) {
-// 					var reply_username = this.posts[this.index].comments.comment[this.comment_index].username;
-// 					var comment_content = '回复' + reply_username + ':' + message.content;
-// 				} else {
-// 					var comment_content = message.content;
-// 				}
-// 				this.posts[this.index].comments.total += 1;
-// 				this.posts[this.index].comments.comment.push({
-// 					"uid": this.user_id,
-// 					"username": this.username,
-// 					"content": comment_content //直接获取input中的值
-// 				});
+				let that = this;
+				console.log(message.content)
+				uni.request({
+					url: this.websiteUrl+'uniApp/comment/addComment',
+					data:{
+						userId:that.userId,
+						commentContent:message.content,
+						type:that.type,
+						targetId:that.targetId,
+						rootId:that.id,
+						parentUserId:that.parentUserId
+						
+					},
+					success:(data)=> {
+						// console.log(data)
+// 						that.commentList = data.data.data.list;
+// 						that.count = data.data.data.count;
+// 						console.log(that.commentList);
+						that.getCommontById();
+					}
+				})
+				
 				this.init_input();
 			},
 			init_input() {
@@ -299,15 +288,28 @@
 					urls: imageList
 				});
 			},
-			goPublish() {
-				uni.navigateTo({
-					url: './publish/publish',
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
-				});
-			},
-			
+// 			goPublish() {
+// 				uni.navigateTo({
+// 					url: './publish/publish',
+// 					success: res => {},
+// 					fail: () => {},
+// 					complete: () => {}
+// 				});
+// 			},
+			goDetail(){
+				let that = this;
+				if(that.value.name !=null){
+					uni.navigateTo({
+						url: '/pages/study/video/video-detial?detailDate=' + encodeURIComponent(JSON.stringify(that.value))
+					});
+				}else{
+					uni.navigateTo({
+						url: "/pages/list2detail-detail/list2detail-detail?detailDate=" + encodeURIComponent(JSON.stringify(
+							that.value))
+					})
+				}
+				
+			}
 		}
 	}
 </script>
